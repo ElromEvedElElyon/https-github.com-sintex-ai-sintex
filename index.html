@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sintex.AI - The Google of Elrom.Net | Buy STBTCX with ChatGPT</title>
+    <meta name="description" content="Search the Elrom Network and buy STBTCX tokens directly through ChatGPT integration">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="chatgpt-integration.css">
+</head>
+<body>
+    <!-- ChatGPT Purchase Button (Fixed Right Side) -->
+    <div id="chatgpt-purchase-widget">
+        <button id="chatgpt-buy-btn" class="chatgpt-buy-button">
+            <svg class="chatgpt-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97-1.138a3.638 3.638 0 00-1.925-.54 3.638 3.638 0 00-1.925.54l-1.97 1.138a3.638 3.638 0 00-1.385 1.385 3.638 3.638 0 000 2.77l1.97 1.138a3.638 3.638 0 001.925.54 3.638 3.638 0 001.925-.54l1.97-1.138a3.638 3.638 0 001.385-1.385 3.638 3.638 0 000-2.77 3.638 3.638 0 00-1.385-1.385z" fill="currentColor"/>
+            </svg>
+            <span class="button-text">Buy with ChatGPT</span>
+            <span class="beta-badge">BETA</span>
+        </button>
+        
+        <!-- Legal Disclaimer Modal -->
+        <div id="legal-modal" class="legal-modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>⚠️ AVISO IMPORTANTE - TESTE BETA</h2>
+                    <button class="close-btn" onclick="closeLegalModal()">&times;</button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="warning-box">
+                        <h3>🚨 ATENÇÃO: PRODUTO EM FASE BETA</h3>
+                        <p>Este é um produto experimental em desenvolvimento.</p>
+                    </div>
+                    
+                    <div class="terms-content">
+                        <h4>TERMOS E CONDIÇÕES:</h4>
+                        <ol>
+                            <li><strong>COMPRA POR SUA CONTA E RISCO:</strong> Ao prosseguir, você reconhece que está comprando tokens STBTCX por sua própria conta e risco.</li>
+                            
+                            <li><strong>SEM REEMBOLSO:</strong> Todas as vendas são finais. NÃO HÁ REEMBOLSOS sob nenhuma circunstância.</li>
+                            
+                            <li><strong>RENÚNCIA DE DISPUTAS JUDICIAIS:</strong> Você renuncia expressamente ao direito de iniciar qualquer disputa judicial relacionada a esta compra.</li>
+                            
+                            <li><strong>PRODUTO VOLÁTIL:</strong> Tokens digitais são extremamente voláteis e podem perder todo o seu valor.</li>
+                            
+                            <li><strong>SEM GARANTIAS:</strong> O serviço é fornecido "como está" sem garantias de qualquer tipo.</li>
+                            
+                            <li><strong>RESPONSABILIDADE:</strong> Você é totalmente responsável por suas decisões de investimento.</li>
+                            
+                            <li><strong>CONFORMIDADE LEGAL:</strong> Você confirma que a compra de tokens é legal em sua jurisdição.</li>
+                            
+                            <li><strong>MAIORIDADE:</strong> Você confirma ter 18 anos ou mais.</li>
+                        </ol>
+                        
+                        <div class="disclaimer-text">
+                            <p><strong>AVISO DE INVESTIMENTO:</strong></p>
+                            <p>Tokens digitais não são investimentos seguros. Você pode perder todo o dinheiro investido. Este produto não é regulamentado por nenhuma autoridade financeira. Não invista mais do que você pode perder.</p>
+                        </div>
+                        
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="accept-terms" />
+                            <label for="accept-terms">
+                                Eu li, entendi e concordo com todos os termos acima. Reconheço que estou comprando por minha conta e risco, sem direito a reembolso, e renuncio a disputas judiciais.
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button class="cancel-btn" onclick="closeLegalModal()">Cancelar</button>
+                    <button class="proceed-btn" id="proceed-btn" onclick="proceedToChatGPT()" disabled>
+                        Concordo e Prosseguir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Sintex.AI Interface -->
+    <div class="container">
+        <header>
+            <nav>
+                <a href="https://yuotube.ai" target="_blank">Yuotube.AI</a>
+                <a href="https://standardbitcoin.io" target="_blank">Standard Bitcoin</a>
+                <a href="https://bitcoinbrasil.org" target="_blank">Bitcoin Brasil</a>
+            </nav>
+        </header>
+
+        <main>
+            <div class="logo-section">
+                <h1 class="logo">Sintex.AI</h1>
+                <p class="tagline">The Google of Elrom.Net</p>
+                <div class="node-counter">
+                    <span id="node-count">20,000</span> nodes online
+                </div>
+            </div>
+
+            <div class="search-section">
+                <div class="search-container">
+                    <input 
+                        type="text" 
+                        id="search-input" 
+                        class="search-input" 
+                        placeholder="Search Elrom Network..."
+                        autofocus
+                    />
+                    <button class="search-btn" onclick="performSearch()">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="button-group">
+                    <button class="primary-btn" onclick="performSearch()">Sintex Search</button>
+                    <button class="secondary-btn" onclick="feelingLucky()">I'm Feeling Lucky</button>
+                </div>
+            </div>
+
+            <div class="features">
+                <div class="feature-card">
+                    <h3>🚀 STBTCX Token</h3>
+                    <p>Buy directly with ChatGPT integration</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔍 Advanced Search</h3>
+                    <p>Search across the entire Elrom Network</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🌐 Multi-Platform</h3>
+                    <p>Integrated with major crypto platforms</p>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Sintex.AI - Part of Elrom Network</p>
+            <div class="footer-links">
+                <a href="#privacy">Privacy</a>
+                <a href="#terms">Terms</a>
+                <a href="#about">About</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ChatGPT Integration Script -->
+    <script src="chatgpt-integration.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
