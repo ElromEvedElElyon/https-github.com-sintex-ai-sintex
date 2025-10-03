@@ -135,6 +135,9 @@
             </div>
         </main>
 
+        <!-- Bitcoin Giveaway Container -->
+        <div id="bitcoin-giveaway-container"></div>
+
         <footer>
             <p>&copy; 2025 Sintex.AI - Part of Elrom Network</p>
             <div class="footer-links">
@@ -147,6 +150,16 @@
 
     <!-- ChatGPT Integration Script -->
     <script src="chatgpt-integration.js"></script>
+    <script src="bitcoin-giveaway.js"></script>
     <script src="app.js"></script>
+    <script>
+        // Inicializar o container do sorteio
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('bitcoin-giveaway-container');
+            if (container && typeof createBitcoinGiveaway === 'function') {
+                container.innerHTML = createBitcoinGiveaway();
+            }
+        });
+    </script>
 </body>
 </html>
