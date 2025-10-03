@@ -27,7 +27,7 @@ function createBitcoinGiveaway() {
         
         <!-- Content -->
         <div style="position: relative; z-index: 1;">
-            <p style="
+            <p id="main-title" style="
                 color: white;
                 font-size: 10px;
                 margin: 0 0 4px 0;
@@ -35,9 +35,9 @@ function createBitcoinGiveaway() {
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
                 text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-            ">🎁 Aguarde para uma grande aventura 🎁</p>
+            ">🎰 Concorra para ganhar 1 Bitcoin inteiro 🎰</p>
             
-            <!-- Slot Machine Style Display - Reduzido -->
+            <!-- Slot Machine Style Display - Reduzido com imagens temáticas -->
             <div style="
                 display: flex;
                 justify-content: center;
@@ -45,21 +45,40 @@ function createBitcoinGiveaway() {
                 margin: 5px 0;
             ">
                 <div class="slot-box">
-                    <div class="slot-number" id="slot1">₿</div>
+                    <div class="slot-number" id="slot1" style="font-size: 12px;">₿</div>
                 </div>
                 <div class="slot-box">
-                    <div class="slot-number" id="slot2">7</div>
+                    <div class="slot-number" id="slot2" style="font-size: 12px;">💎</div>
                 </div>
                 <div class="slot-box">
-                    <div class="slot-number" id="slot3">7</div>
+                    <div class="slot-number" id="slot3" style="font-size: 12px;">👁</div>
                 </div>
                 <div class="slot-box">
-                    <div class="slot-number" id="slot4">7</div>
+                    <div class="slot-number" id="slot4" style="font-size: 12px;">🚀</div>
                 </div>
             </div>
             
+            <!-- Lever Button para jogar -->
+            <div id="lever-container" style="display: none; margin: 5px auto;">
+                <button onclick="pullLever()" style="
+                    background: linear-gradient(180deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%);
+                    border: 2px solid #B8860B;
+                    border-radius: 10px 10px 20px 20px;
+                    padding: 8px 6px;
+                    font-size: 10px;
+                    font-weight: bold;
+                    color: #333;
+                    cursor: pointer;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                    transition: all 0.3s;
+                    width: 60px;
+                " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                    🎰 JOGAR
+                </button>
+            </div>
+            
             <!-- Entry Form - Reduzido -->
-            <div style="margin: 5px 0;">
+            <div id="entry-form" style="margin: 5px 0;">
                 <input type="email" id="giveaway-email" placeholder="E-mail" style="
                     width: 70px;
                     padding: 3px 4px;
@@ -147,7 +166,8 @@ function createBitcoinGiveaway() {
 
 // Slot Machine Animation
 function startSlotMachine() {
-    const symbols = ['₿', '7', '💎', '🎰', '💰', '⭐', '🍀', '🎲'];
+    // Símbolos temáticos Bitcoin: Bitcoin, Satoshi, Diamante, Laser Eyes, Michael Saylor, Rocket
+    const symbols = ['₿', '🧑', '💎', '👁', '🚀', '💰', '⚡', '🔥'];
     const slots = ['slot1', 'slot2', 'slot3', 'slot4'];
     
     function spinSlot(slotId) {
@@ -220,6 +240,62 @@ function startSlotMachine() {
     setInterval(animateSlots, 15000); // Spin every 15 seconds
 }
 
+// Pull Lever function
+function pullLever() {
+    const slots = ['slot1', 'slot2', 'slot3', 'slot4'];
+    const symbols = ['₿', '🧑', '💎', '👁', '🚀', '💰', '⚡', '🔥'];
+    
+    // Animate each slot
+    slots.forEach((slotId, index) => {
+        setTimeout(() => {
+            const slot = document.getElementById(slotId);
+            if (slot) {
+                // Rapid spinning animation
+                let spins = 0;
+                const spinInterval = setInterval(() => {
+                    slot.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+                    slot.style.fontSize = '12px';
+                    spins++;
+                    
+                    if (spins >= 10) {
+                        clearInterval(spinInterval);
+                        // Final symbol
+                        const finalSymbol = symbols[Math.floor(Math.random() * symbols.length)];
+                        slot.textContent = finalSymbol;
+                        
+                        // Check result after last slot
+                        if (index === 3) {
+                            setTimeout(checkResult, 500);
+                        }
+                    }
+                }, 100);
+            }
+        }, index * 200);
+    });
+}
+
+// Check result function
+function checkResult() {
+    const slot1 = document.getElementById('slot1');
+    const slot2 = document.getElementById('slot2');
+    const slot3 = document.getElementById('slot3');
+    const slot4 = document.getElementById('slot4');
+    
+    if (slot1 && slot2 && slot3 && slot4) {
+        // Check if all slots are Bitcoin symbol
+        if (slot1.textContent === '₿' && 
+            slot2.textContent === '₿' && 
+            slot3.textContent === '₿' && 
+            slot4.textContent === '₿') {
+            // All Bitcoin - but never say they won
+            alert('🎯 Continue treinando para o futuro desafio real!');
+        } else {
+            // Different symbols
+            alert('❌ Não foi dessa vez! Tente novamente.');
+        }
+    }
+}
+
 // Entry function
 function enterGiveaway() {
     const email = document.getElementById('giveaway-email').value;
@@ -238,12 +314,27 @@ function enterGiveaway() {
     const entries = JSON.parse(localStorage.getItem('btc_giveaway_entries') || '[]');
     
     if (entries.includes(email)) {
-        alert('Você já está participando! Boa sorte!');
+        alert('Você já está participando! Use a alavanca para jogar!');
+        // Show lever button
+        const leverContainer = document.getElementById('lever-container');
+        if (leverContainer) leverContainer.style.display = 'block';
         return;
     }
     
     entries.push(email);
     localStorage.setItem('btc_giveaway_entries', JSON.stringify(entries));
+    
+    // Hide form and show lever
+    const entryForm = document.getElementById('entry-form');
+    const leverContainer = document.getElementById('lever-container');
+    const mainTitle = document.getElementById('main-title');
+    
+    if (entryForm) entryForm.style.display = 'none';
+    if (leverContainer) leverContainer.style.display = 'block';
+    if (mainTitle) {
+        mainTitle.innerHTML = '🎁 Aguarde para uma grande aventura 🎁';
+        mainTitle.style.fontSize = '9px';
+    }
     
     // Update participants count
     const participantsEl = document.getElementById('participants');
@@ -253,11 +344,8 @@ function enterGiveaway() {
         participantsEl.textContent = count.toLocaleString();
     }
     
-    // Clear input and show success
-    document.getElementById('giveaway-email').value = '';
-    
     // Success message
-    alert('🎉 Aguarde para uma grande aventura! Boa sorte!');
+    alert('🎉 Aguarde para uma grande aventura! Use a alavanca para jogar!');
     
     // Optional: Send to backend
     // fetch('/api/giveaway-entry', { 
@@ -295,6 +383,22 @@ if (typeof window !== 'undefined') {
         setTimeout(() => {
             startSlotMachine();
             updateBTCPrice();
+            
+            // Check if user already entered
+            const entries = JSON.parse(localStorage.getItem('btc_giveaway_entries') || '[]');
+            if (entries.length > 0) {
+                // User already registered - show lever
+                const entryForm = document.getElementById('entry-form');
+                const leverContainer = document.getElementById('lever-container');
+                const mainTitle = document.getElementById('main-title');
+                
+                if (entryForm) entryForm.style.display = 'none';
+                if (leverContainer) leverContainer.style.display = 'block';
+                if (mainTitle) {
+                    mainTitle.innerHTML = '🎁 Aguarde para uma grande aventura 🎁';
+                    mainTitle.style.fontSize = '9px';
+                }
+            }
         }, 100);
     });
 }
