@@ -51,7 +51,7 @@ function createBitcoinGiveaway() {
                     <div class="slot-number" id="slot2" style="font-size: 12px;">💎</div>
                 </div>
                 <div class="slot-box">
-                    <div class="slot-number" id="slot3" style="font-size: 12px;">👁</div>
+                    <div class="slot-number" id="slot3" style="font-size: 12px;">👁️‍🔥</div>
                 </div>
                 <div class="slot-box">
                     <div class="slot-number" id="slot4" style="font-size: 12px;">🚀</div>
@@ -167,7 +167,7 @@ function createBitcoinGiveaway() {
 // Slot Machine Animation
 function startSlotMachine() {
     // Símbolos temáticos Bitcoin: Bitcoin, Satoshi, Diamante, Laser Eyes, Michael Saylor, Rocket
-    const symbols = ['₿', '🧑', '💎', '👁', '🚀', '💰', '⚡', '🔥'];
+    const symbols = ['₿', '👤', '💎', '👁️‍🔥', '🚀', '💰', '⚡', '🔥'];
     const slots = ['slot1', 'slot2', 'slot3', 'slot4'];
     
     function spinSlot(slotId) {
@@ -243,7 +243,7 @@ function startSlotMachine() {
 // Pull Lever function
 function pullLever() {
     const slots = ['slot1', 'slot2', 'slot3', 'slot4'];
-    const symbols = ['₿', '🧑', '💎', '👁', '🚀', '💰', '⚡', '🔥'];
+    const symbols = ['₿', '👤', '💎', '👁️‍🔥', '🚀', '💰', '⚡', '🔥'];
     
     // Animate each slot
     slots.forEach((slotId, index) => {
