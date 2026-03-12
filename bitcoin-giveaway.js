@@ -51,7 +51,7 @@ function createBitcoinGiveaway() {
                     <div class="slot-number" id="slot2" style="font-size: 12px;">💎</div>
                 </div>
                 <div class="slot-box">
-                    <div class="slot-number" id="slot3" style="font-size: 12px;">👁</div>
+                    <div class="slot-number" id="slot3" style="font-size: 12px;">👁️‍🔥</div>
                 </div>
                 <div class="slot-box">
                     <div class="slot-number" id="slot4" style="font-size: 12px;">🚀</div>
@@ -167,7 +167,7 @@ function createBitcoinGiveaway() {
 // Slot Machine Animation
 function startSlotMachine() {
     // Símbolos temáticos Bitcoin: Bitcoin, Satoshi, Diamante, Laser Eyes, Michael Saylor, Rocket
-    const symbols = ['₿', '🧑', '💎', '👁', '🚀', '💰', '⚡', '🔥'];
+    const symbols = ['₿', '👤', '💎', '👁️‍🔥', '🚀', '💰', '⚡', '🔥'];
     const slots = ['slot1', 'slot2', 'slot3', 'slot4'];
     
     function spinSlot(slotId) {
@@ -243,7 +243,7 @@ function startSlotMachine() {
 // Pull Lever function
 function pullLever() {
     const slots = ['slot1', 'slot2', 'slot3', 'slot4'];
-    const symbols = ['₿', '🧑', '💎', '👁', '🚀', '💰', '⚡', '🔥'];
+    const symbols = ['₿', '👤', '💎', '👁️‍🔥', '🚀', '💰', '⚡', '🔥'];
     
     // Animate each slot
     slots.forEach((slotId, index) => {
@@ -347,12 +347,18 @@ function enterGiveaway() {
     // Success message
     alert('🎉 Aguarde para uma grande aventura! Use a alavanca para jogar!');
     
-    // Optional: Send to backend
-    // fetch('/api/giveaway-entry', { 
-    //     method: 'POST',
-    //     body: JSON.stringify({ email }),
-    //     headers: { 'Content-Type': 'application/json' }
-    // });
+    // Send to Google Sheets (free database — text/plain avoids CORS preflight)
+    const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwZFdoKXWuOJelwOGgxz5KBFMqCVw3puwc1cmFIXrme_qTXBYYIJSuJrsRXBIZha0Q1/exec';
+    fetch(GOOGLE_SHEETS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+            email: email,
+            timestamp: new Date().toISOString(),
+            source: 'sintex.ai',
+            wallet: window.solana?.publicKey?.toString() || 'none'
+        })
+    }).catch(() => {});
 }
 
 // Email validation
