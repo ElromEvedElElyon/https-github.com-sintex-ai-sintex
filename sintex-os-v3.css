@@ -1,0 +1,80 @@
+/* SintexOS v3.0 Styles — Messenger, Voice, Auth, Search v2, Browser v2, Brain, VPN */
+
+/* ===== SHAKE / NUDGE ANIMATION ===== */
+@keyframes shake {
+  0%,100% { transform: translate(var(--wx, 0), var(--wy, 0)); }
+  10%,30%,50%,70%,90% { transform: translate(calc(var(--wx, 0px) - 6px), var(--wy, 0)); }
+  20%,40%,60%,80% { transform: translate(calc(var(--wx, 0px) + 6px), var(--wy, 0)); }
+}
+.win.shake { animation: shake 0.5s ease-in-out; }
+
+/* ===== VOICE CALL OVERLAY ===== */
+.voice-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(30px);z-index:10000;display:flex;align-items:center;justify-content:center;animation:fadeIn .3s}
+.voice-overlay.closing{animation:fadeOut .3s forwards}
+.vo-content{text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px}
+.vo-avatar{width:100px;height:100px;border-radius:50%;border:3px solid;position:relative;display:flex;align-items:center;justify-content:center}
+.vo-avatar-inner{width:90px;height:90px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:700;color:#000}
+.vo-pulse{position:absolute;inset:-8px;border-radius:50%;border:2px solid;animation:vo-pulse 2s infinite}
+@keyframes vo-pulse{0%{transform:scale(1);opacity:.5}100%{transform:scale(1.3);opacity:0}}
+.vo-name{font-size:24px;font-weight:600;color:#fff}
+.vo-status{font-size:14px;color:rgba(255,255,255,.5)}
+.vo-timer{font-size:18px;font-family:'JetBrains Mono',monospace;color:#60CDFF}
+#voice-waveform{border-radius:12px;background:rgba(0,0,0,.5);max-width:90vw}
+.vo-controls{display:flex;gap:16px;margin-top:12px}
+.vo-btn{width:56px;height:56px;border-radius:50%;border:none;background:rgba(255,255,255,.1);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.vo-btn:hover{background:rgba(255,255,255,.2)}
+.vo-btn.active{background:rgba(96,205,255,.3)}
+.vo-hangup{background:rgba(255,68,68,.8)!important}
+.vo-hangup:hover{background:rgba(255,68,68,1)!important}
+.vo-btn svg{width:24px;height:24px}
+
+/* ===== AUTH / CONNECTIONS ===== */
+.auth-panel{display:flex;flex-direction:column;height:100%;background:#0a0a1a;padding:20px;overflow-y:auto;gap:16px}
+.auth-header{display:flex;align-items:center;justify-content:space-between}
+.auth-title{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:600;color:#e0e0e0}
+.auth-title svg{color:#a855f7}
+.auth-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.auth-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:16px;display:flex;gap:12px;transition:all .2s}
+.auth-card:hover{background:rgba(255,255,255,.05)}
+.auth-card-icon{width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.auth-card-icon svg{width:28px;height:28px}
+.auth-card-info{flex:1;min-width:0}
+.auth-card-name{font-weight:600;font-size:14px;color:#e0e0e0}
+.auth-card-desc{font-size:11px;color:rgba(255,255,255,.4);margin-top:2px}
+.auth-card-status{font-size:11px;color:rgba(255,255,255,.4);margin-top:4px;display:flex;align-items:center;gap:4px}
+.auth-card-status .status-dot{width:6px;height:6px;border-radius:50%;background:#666}
+.auth-card-status.connected{color:#00ff88}
+.auth-card-status.connected .status-dot{background:#00ff88}
+.auth-card-email{font-size:10px;color:rgba(255,255,255,.3);margin-top:2px}
+.auth-card-actions{display:flex;flex-direction:column;gap:4px;align-items:flex-end;justify-content:center}
+.auth-btn{padding:6px 14px;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap}
+.auth-btn.connect{background:#60CDFF;color:#000}
+.auth-btn.disconnect{background:rgba(255,68,68,.15);color:#ff4444}
+.auth-btn:hover{opacity:.85}
+.auth-key-input{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#e0e0e0;border-radius:6px;padding:5px 8px;font-size:11px;width:140px}
+.auth-summary{text-align:center;font-size:12px;color:rgba(255,255,255,.4);padding-top:12px;border-top:1px solid rgba(255,255,255,.06)}
+.auth-summary-count{color:#60CDFF;font-weight:700;font-size:16px}
+
+/* ===== GENERIC ANIMATIONS ===== */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeOut{from{opacity:1}to{opacity:0}}
+@keyframes slideUp{from{transform:translateY(10px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes bounceIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+
+/* ===== SCROLLBAR FOR NEW APPS ===== */
+.vpn-app::-webkit-scrollbar,
+.brain-app::-webkit-scrollbar,
+.auth-panel::-webkit-scrollbar {
+  width: 6px;
+}
+.vpn-app::-webkit-scrollbar-track,
+.brain-app::-webkit-scrollbar-track,
+.auth-panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+.vpn-app::-webkit-scrollbar-thumb,
+.brain-app::-webkit-scrollbar-thumb,
+.auth-panel::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,.1);
+  border-radius: 3px;
+}
