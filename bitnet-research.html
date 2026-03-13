@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BitNet 1.58-bit LLM Research | Sintex.AI</title>
+    <meta name="description" content="Comprehensive research on Microsoft BitNet 1.58-bit ternary LLM technology. 2.37x-6.17x speedup, 55-82% energy reduction. The future of efficient AI with {-1, 0, +1} weight quantization.">
+    <meta name="keywords" content="BitNet, 1-bit LLM, ternary weights, Microsoft Research, AI efficiency, Apple M5 Pro, NPU, energy-efficient AI, BitNet b1.58, quantization">
+    <meta name="author" content="Sintex.AI Research">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://sintex.ai/bitnet-research.html">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="BitNet 1.58-bit LLM: The Future of Efficient AI">
+    <meta property="og:description" content="Deep dive into Microsoft's revolutionary 1.58-bit ternary LLM. {-1, 0, +1} weights achieve 2.37x-6.17x speedup with 55-82% energy savings.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sintex.ai/bitnet-research.html">
+    <meta property="og:site_name" content="Sintex.AI">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="BitNet 1.58-bit LLM Research | Sintex.AI">
+    <meta name="twitter:description" content="Microsoft's 1-bit LLM achieves 6.17x speedup. The future of AI search is ternary.">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "BitNet 1.58-bit LLM: Ternary Weight Quantization for Efficient AI",
+        "description": "Comprehensive technical analysis of Microsoft BitNet b1.58 architecture using {-1, 0, +1} ternary weights for large language models",
+        "author": {
+            "@type": "Organization",
+            "name": "Sintex.AI Research",
+            "url": "https://sintex.ai"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "Sintex.AI"
+        },
+        "datePublished": "2026-03-12",
+        "dateModified": "2026-03-12",
+        "about": [
+            "1-bit Large Language Models",
+            "Ternary Weight Quantization",
+            "Energy-Efficient AI",
+            "Apple M5 Pro NPU Optimization",
+            "ARM NEON Assembly for AI"
+        ],
+        "proficiencyLevel": "Advanced",
+        "dependencies": "BitNet b1.58 Framework, ARM64 Architecture"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Sintex.AI BitNet Search Engine",
+        "applicationCategory": "SearchApplication",
+        "operatingSystem": "Web, Linux, macOS",
+        "description": "AI-powered search engine built on Microsoft BitNet 1.58-bit ternary LLM technology",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "author": {
+            "@type": "Organization",
+            "name": "Sintex.AI"
+        }
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #e0e0e0; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .gradient-text { background: linear-gradient(135deg, #00d4ff, #7c3aed, #f43f5e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .code-block { background: #111; border: 1px solid #333; border-radius: 8px; overflow-x: auto; }
+        .ternary-vis { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin: 1px; }
+        .t-neg { background: #ef4444; }
+        .t-zero { background: #333; }
+        .t-pos { background: #22c55e; }
+        .perf-bar { height: 24px; border-radius: 4px; transition: width 1s ease-out; }
+        .glow { box-shadow: 0 0 30px rgba(0, 212, 255, 0.15); }
+        article section { scroll-margin-top: 80px; }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-black/90 backdrop-blur border-b border-gray-800 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="/" class="text-xl font-bold">
+                <span class="text-blue-500">Sintex</span><span class="text-gray-400">.</span><span class="text-green-500">AI</span>
+            </a>
+            <div class="flex items-center gap-4 text-sm">
+                <a href="/" class="text-gray-400 hover:text-white">Search</a>
+                <a href="/bitnet-research.html" class="text-white font-medium">BitNet Research</a>
+                <a href="/binary-computing.html" class="text-gray-400 hover:text-white">Binary Computing</a>
+                <a href="/search.html" class="text-gray-400 hover:text-white">AI Search</a>
+            </div>
+        </div>
+    </nav>
+
+    <article class="max-w-4xl mx-auto px-4 pt-24 pb-16">
+        <!-- Hero -->
+        <header class="mb-16 text-center">
+            <div class="mono text-sm text-cyan-400 mb-4">RESEARCH PAPER</div>
+            <h1 class="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">
+                <span class="gradient-text">BitNet 1.58-bit</span><br>
+                <span class="text-white">Ternary LLM Architecture</span>
+            </h1>
+            <p class="text-xl text-gray-400 max-w-2xl mx-auto mb-8">
+                How {-1, 0, +1} weight quantization achieves 2.37x-6.17x speedup with 55-82% energy reduction — and why it changes everything for AI search.
+            </p>
+            <div class="flex flex-wrap justify-center gap-3 text-xs mono">
+                <span class="px-3 py-1 bg-cyan-500/10 text-cyan-400 rounded-full border border-cyan-500/30">Microsoft Research</span>
+                <span class="px-3 py-1 bg-purple-500/10 text-purple-400 rounded-full border border-purple-500/30">1.58-bit Quantization</span>
+                <span class="px-3 py-1 bg-green-500/10 text-green-400 rounded-full border border-green-500/30">Apple M5 Pro NPU</span>
+                <span class="px-3 py-1 bg-red-500/10 text-red-400 rounded-full border border-red-500/30">ARM NEON Assembly</span>
+            </div>
+        </header>
+
+        <!-- Table of Contents -->
+        <nav class="mb-16 p-6 bg-gray-900/50 rounded-xl border border-gray-800">
+            <h2 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Contents</h2>
+            <ol class="space-y-2 text-sm">
+                <li><a href="#what-is-bitnet" class="text-cyan-400 hover:text-cyan-300">1. What is BitNet?</a></li>
+                <li><a href="#ternary-weights" class="text-cyan-400 hover:text-cyan-300">2. Ternary Weight System {-1, 0, +1}</a></li>
+                <li><a href="#performance" class="text-cyan-400 hover:text-cyan-300">3. Performance Benchmarks</a></li>
+                <li><a href="#assembly" class="text-cyan-400 hover:text-cyan-300">4. Assembly & Binary: Kernel Operations</a></li>
+                <li><a href="#m5-pro" class="text-cyan-400 hover:text-cyan-300">5. Apple M5 Pro NPU Optimization</a></li>
+                <li><a href="#bitcoin-energy" class="text-cyan-400 hover:text-cyan-300">6. BitNet + Bitcoin: Energy Convergence</a></li>
+                <li><a href="#sintex-integration" class="text-cyan-400 hover:text-cyan-300">7. Sintex.AI Search Engine Integration</a></li>
+            </ol>
+        </nav>
+
+        <!-- Section 1: What is BitNet -->
+        <section id="what-is-bitnet" class="mb-16">
+            <h2 class="text-3xl font-bold mb-6 text-white">1. What is BitNet?</h2>
+            <p class="text-gray-300 leading-relaxed mb-4">
+                BitNet is a revolutionary neural network architecture developed by Microsoft Research that replaces traditional floating-point weights (FP16/FP32) with <strong class="text-cyan-400">ternary values: {-1, 0, +1}</strong>. This means every weight in the model occupies just 1.58 bits of information (log<sub>2</sub>(3) = 1.585 bits), compared to the 16 or 32 bits used in standard LLMs.
+            </p>
+            <p class="text-gray-300 leading-relaxed mb-6">
+                The key insight is that matrix multiplications — which dominate LLM computation — can be replaced with simple <strong class="text-white">additions and subtractions</strong> when weights are ternary. No floating-point multiply units needed. This fundamentally changes the hardware requirements for AI inference.
+            </p>
+
+            <div class="code-block p-4 mb-6">
+                <div class="text-xs text-gray-500 mb-2 mono">// Traditional vs BitNet computation</div>
+<pre class="mono text-sm text-green-400">
+<span class="text-gray-500">// Standard FP16 — requires multiply-accumulate (MAC)</span>
+output[i] += weight[j] * activation[j];  <span class="text-gray-500">// 16-bit × 16-bit multiply</span>
+
+<span class="text-gray-500">// BitNet 1.58-bit — only add/subtract/skip</span>
+<span class="text-cyan-400">if</span> (weight[j] == +1) output[i] += activation[j];      <span class="text-gray-500">// add</span>
+<span class="text-cyan-400">else if</span> (weight[j] == -1) output[i] -= activation[j]; <span class="text-gray-500">// subtract</span>
+<span class="text-gray-500">// weight == 0: skip entirely (sparsity bonus)</span>
+</pre>
+            </div>
+
+            <div class="bg-cyan-500/5 border border-cyan-500/20 rounded-xl p-6">
+                <h3 class="text-lg font-bold text-cyan-400 mb-3">Key Innovation: BitLinear Layer</h3>
+                <p class="text-gray-300 text-sm">
+                    BitNet replaces the standard <code class="mono bg-gray-800 px-1 rounded">nn.Linear</code> layer with <code class="mono bg-gray-800 px-1 rounded">BitLinear</code>, which constrains weights to {-1, 0, +1} during training using a custom quantization function. Activations are quantized to 8-bit integers. The result: the entire forward pass uses integer arithmetic only.
+                </p>
+            </div>
+        </section>
+
+        <!-- Section 2: Ternary Weights -->
+        <section id="ternary-weights" class="mb-16">
+            <h2 class="text-3xl font-bold mb-6 text-white">2. Ternary Weight System {-1, 0, +1}</h2>
+
+            <p class="text-gray-300 leading-relaxed mb-6">
+                Each weight in a BitNet model exists in one of exactly three states. This is fundamentally different from binary (1-bit) quantization which uses only {-1, +1}. The inclusion of zero creates <strong class="text-white">structured sparsity</strong> — the model learns to zero-out irrelevant connections during training.
+            </p>
+
+            <!-- Visual: Ternary Weight Matrix -->
+            <div class="bg-gray-900 rounded-xl p-6 mb-6 glow">
+                <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Ternary Weight Matrix Visualization</h3>
+                <div class="flex flex-wrap gap-0.5 mb-4 max-w-md" id="ternary-matrix">
+                    <!-- Generated by JS -->
+                </div>
+                <div class="flex gap-6 text-xs mono">
+                    <span class="flex items-center gap-2"><span class="ternary-vis t-pos"></span> +1 (excitatory)</span>
+                    <span class="flex items-center gap-2"><span class="ternary-vis t-zero"></span> 0 (sparse/skip)</span>
+                    <span class="flex items-center gap-2"><span class="ternary-vis t-neg"></span> -1 (inhibitory)</span>
+                </div>
+            </div>
+
+            <div class="code-block p-4 mb-6">
+                <div class="text-xs text-gray-500 mb-2 mono">// BitNet quantization function (Python)</div>
+<pre class="mono text-sm text-green-400">
+<span class="text-cyan-400">def</span> <span class="text-yellow-400">weight_quant</span>(w):
+    <span class="text-gray-500">"""Quantize weights to {-1, 0, +1} using absmean"""</span>
+    scale = w.abs().mean()
+    u = (w / (scale + <span class="text-purple-400">1e-5</span>)).round().clamp(-<span class="text-purple-400">1</span>, <span class="text-purple-400">1</span>)
+    <span class="text-cyan-400">return</span> u  <span class="text-gray-500"># ternary: each weight is -1, 0, or +1</span>
+
+<span class="text-cyan-400">def</span> <span class="text-yellow-400">activation_quant</span>(x):
+    <span class="text-gray-500">"""Quantize activations to 8-bit integer"""</span>
+    scale = <span class="text-purple-400">127.0</span> / x.abs().max(dim=-<span class="text-purple-400">1</span>, keepdim=<span class="text-cyan-400">True</span>).values
+    y = (x * scale).round().clamp(-<span class="text-purple-400">128</span>, <span class="text-purple-400">127</span>)
+    <span class="text-cyan-400">return</span> y
+</pre>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="bg-green-500/5 border border-green-500/20 rounded-lg p-4 text-center">
+                    <div class="text-3xl font-bold text-green-400 mb-1">1.58</div>
+                    <div class="text-sm text-gray-400">bits per weight</div>
+                    <div class="text-xs text-gray-500 mt-1">log2(3) = 1.585</div>
+                </div>
+                <div class="bg-purple-500/5 border border-purple-500/20 rounded-lg p-4 text-center">
+                    <div class="text-3xl font-bold text-purple-400 mb-1">10x</div>
+                    <div class="text-sm text-gray-400">less memory</div>
+                    <div class="text-xs text-gray-500 mt-1">vs FP16 (16 bits)</div>
+                </div>
+                <div class="bg-cyan-500/5 border border-cyan-500/20 rounded-lg p-4 text-center">
+                    <div class="text-3xl font-bold text-cyan-400 mb-1">0%</div>
+                    <div class="text-sm text-gray-400">multiplications</div>
+                    <div class="text-xs text-gray-500 mt-1">add/sub only</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Performance -->
+        <section id="performance" class="mb-16">
+            <h2 class="text-3xl font-bold mb-6 text-white">3. Performance Benchmarks</h2>
+
+            <p class="text-gray-300 leading-relaxed mb-6">
+                BitNet b1.58 achieves remarkable performance improvements while matching full-precision model quality. The speedup comes from replacing energy-expensive multiply operations with simple additions, and the memory reduction enables running larger models on consumer hardware.
+            </p>
+
+            <!-- Performance Bars -->
+            <div class="space-y-6 mb-8">
+                <div>
+                    <div class="flex justify-between text-sm mb-2">
+                        <span class="text-gray-400">Inference Speed (vs FP16)</span>
+                        <span class="text-cyan-400 font-bold">2.37x - 6.17x faster</span>
+                    </div>
+                    <div class="w-full bg-gray-800 rounded-full h-6">
+                        <div class="perf-bar bg-gradient-to-r from-cyan-500 to-blue-500" style="width: 0%" data-target="82"></div>
+                    </div>
+                    <div class="flex justify-between text-xs text-gray-500 mt-1">
+                        <span>FP16 baseline (1x)</span>
+                        <span>BitNet b1.58 (6.17x at 70B params)</span>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between text-sm mb-2">
+                        <span class="text-gray-400">Energy Reduction</span>
+                        <span class="text-green-400 font-bold">55.4% - 82.2% less energy</span>
+                    </div>
+                    <div class="w-full bg-gray-800 rounded-full h-6">
+                        <div class="perf-bar bg-gradient-to-r from-green-500 to-emerald-500" style="width: 0%" data-target="82"></div>
+                    </div>
+                    <div class="flex justify-between text-xs text-gray-500 mt-1">
+                        <span>FP16 energy cost</span>
+                        <span>82.2% reduction at 70B scale</span>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between text-sm mb-2">
+                        <span class="text-gray-400">Memory Reduction</span>
+                        <span class="text-purple-400 font-bold">~10x less memory</span>
+                    </div>
+                    <div class="w-full bg-gray-800 rounded-full h-6">
+                        <div class="perf-bar bg-gradient-to-r from-purple-500 to-pink-500" style="width: 0%" data-target="90"></div>
+                    </div>
+                    <div class="flex justify-between text-xs text-gray-500 mt-1">
+                        <span>FP16: 16 bits/weight</span>
+                        <span>BitNet: 1.58 bits/weight</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Benchmark Table -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b border-gray-700">
+                            <th class="text-left py-3 text-gray-400 font-medium">Model Size</th>
+                            <th class="text-right py-3 text-gray-400 font-medium">Speedup</th>
+                            <th class="text-right py-3 text-gray-400 font-medium">Energy Saved</th>
+                            <th class="text-right py-3 text-gray-400 font-medium">Memory</th>
+                            <th class="text-right py-3 text-gray-400 font-medium">Perplexity</th>
+                        </tr>
+                    </thead>
+                    <tbody class="mono">
+                        <tr class="border-b border-gray-800">
+                            <td class="py-3 text-white">3B params</td>
+                            <td class="py-3 text-right text-cyan-400">2.37x</td>
+                            <td class="py-3 text-right text-green-400">55.4%</td>
+                            <td class="py-3 text-right text-purple-400">0.6 GB</td>
+                            <td class="py-3 text-right text-gray-300">9.91</td>
+                        </tr>
+                        <tr class="border-b border-gray-800">
+                            <td class="py-3 text-white">7B params</td>
+                            <td class="py-3 text-right text-cyan-400">3.42x</td>
+                            <td class="py-3 text-right text-green-400">65.8%</td>
+                            <td class="py-3 text-right text-purple-400">1.4 GB</td>
+                            <td class="py-3 text-right text-gray-300">9.62</td>
+                        </tr>
+                        <tr class="border-b border-gray-800">
+                            <td class="py-3 text-white">13B params</td>
+                            <td class="py-3 text-right text-cyan-400">4.15x</td>
+                            <td class="py-3 text-right text-green-400">72.1%</td>
+                            <td class="py-3 text-right text-purple-400">2.6 GB</td>
+                            <td class="py-3 text-right text-gray-300">9.51</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 text-white font-bold">70B params</td>
+                            <td class="py-3 text-right text-cyan-400 font-bold">6.17x</td>
+                            <td class="py-3 text-right text-green-400 font-bold">82.2%</td>
+                            <td class="py-3 text-right text-purple-400 font-bold">13.9 GB</td>
+                            <td class="py-3 text-right text-gray-300">8.87</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section 4: Assembly & Binary -->
+        <section id="assembly" class="mb-16">
+            <h2 class="text-3xl font-bold mb-6 text-white">4. Assembly & Binary: Kernel Operations</h2>
+
+            <p class="text-gray-300 leading-relaxed mb-6">
+                The real magic of BitNet happens at the hardware level. Since weights are ternary, the inner kernel of matrix multiplication becomes a series of conditional additions — perfectly suited for SIMD (Single Instruction, Multiple Data) operations on modern CPUs. Here's how it looks at the assembly level:
+            </p>
+
+            <div class="code-block p-4 mb-6">
+                <div class="text-xs text-gray-500 mb-2 mono">; ARM64 NEON assembly — BitNet ternary GEMM kernel</div>
+<pre class="mono text-sm">
+<span class="text-gray-500">; Load 16 activations into NEON register</span>
+<span class="text-cyan-400">LD1</span>     {<span class="text-yellow-400">v0</span>.16b}, [x0], #16    <span class="text-gray-500">; v0 = activations[0..15]</span>
+
+<span class="text-gray-500">; Load packed ternary weights (2 bits each, 8 weights per byte)</span>
+<span class="text-cyan-400">LD1</span>     {<span class="text-yellow-400">v1</span>.16b}, [x1], #16    <span class="text-gray-500">; v1 = packed_weights</span>
+
+<span class="text-gray-500">; Decode ternary: 00=0, 01=+1, 10=-1</span>
+<span class="text-cyan-400">AND</span>     <span class="text-yellow-400">v2</span>.16b, v1.16b, <span class="text-yellow-400">v_mask_01</span>.16b  <span class="text-gray-500">; v2 = positive mask</span>
+<span class="text-cyan-400">USHR</span>    <span class="text-yellow-400">v3</span>.16b, v1.16b, #1            <span class="text-gray-500">; v3 = negative mask</span>
+<span class="text-cyan-400">AND</span>     <span class="text-yellow-400">v3</span>.16b, v3.16b, <span class="text-yellow-400">v_mask_01</span>.16b
+
+<span class="text-gray-500">; Conditional add/subtract (NO multiply needed!)</span>
+<span class="text-cyan-400">BIF</span>     <span class="text-yellow-400">v4</span>.16b, v0.16b, v2.16b  <span class="text-gray-500">; add where weight = +1</span>
+<span class="text-cyan-400">BIT</span>     <span class="text-yellow-400">v5</span>.16b, v0.16b, v3.16b  <span class="text-gray-500">; sub where weight = -1</span>
+
+<span class="text-gray-500">; Accumulate result</span>
+<span class="text-cyan-400">ADD</span>     <span class="text-yellow-400">v6</span>.4s, v6.4s, v4.4s    <span class="text-gray-500">; accumulator += positives</span>
+<span class="text-cyan-400">SUB</span>     <span class="text-yellow-400">v6</span>.4s, v6.4s, v5.4s    <span class="text-gray-500">; accumulator -= negatives</span>
+
+<span class="text-gray-500">; Zero weights: no operation needed (free sparsity!)</span>
+</pre>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4 mb-6">
+                <div class="code-block p-4">
+                    <div class="text-xs text-gray-500 mb-2 mono">// Binary representation of ternary weights</div>
+<pre class="mono text-xs text-green-400">
+Weight  Binary  Meaning
+──────  ──────  ───────
+  -1     10     Subtract activation
+   0     00     Skip (sparsity)
+  +1     01     Add activation
+
+<span class="text-gray-500">// 8 weights packed in 2 bytes:</span>
+<span class="text-cyan-400">01 10 00 01 00 10 01 00</span>
+ +1 -1  0 +1  0 -1 +1  0
+</pre>
+                </div>
+                <div class="code-block p-4">
+                    <div class="text-xs text-gray-500 mb-2 mono">// Energy cost comparison per operation</div>
+<pre class="mono text-xs text-green-400">
+Operation        Energy (pJ)  Ratio
+─────────────    ──────────   ─────
+FP32 Multiply    <span class="text-red-400">3.7 pJ</span>       100%
+FP16 Multiply    <span class="text-yellow-400">1.1 pJ</span>        30%
+INT8 Multiply    <span class="text-yellow-400">0.2 pJ</span>         5%
+<span class="text-green-400">INT8 Add</span>         <span class="text-green-400">0.03 pJ</span>      <span class="text-green-400">0.8%</span>
+
+<span class="text-gray-500">// BitNet uses ONLY add/sub</span>
+<span class="text-gray-500">// 125x less energy per op vs FP32</span>
+</pre>
+                </div>
+            </div>
+
+            <div class="bg-yellow-500/5 border border-yellow-500/20 rounded-xl p-6">
+                <h3 class="text-lg font-bold text-yellow-400 mb-3">Why Assembly Matters for BitNet</h3>
+                <p class="text-gray-300 text-sm">
+                    Standard deep learning frameworks (PyTorch, TensorFlow) are optimized for floating-point operations. BitNet's ternary arithmetic requires <strong>custom kernels</strong> written in assembly or low-level C to fully exploit hardware capabilities. The official BitNet implementation includes optimized kernels for ARM NEON, x86 AVX-512, and Apple AMX — achieving speeds impossible with standard framework operations.
+                </p>
+            </div>
+        </section>
+
+        <!-- Section 5: Apple M5 Pro NPU -->
+        <section id="m5-pro" class="mb-16">
+            <h2 class="text-3xl font-bold mb-6 text-white">5. Apple M5 Pro NPU Optimization</h2>
+
+            <p class="text-gray-300 leading-relaxed mb-6">
+                The Apple M5 Pro represents the ideal consumer hardware for BitNet inference. Its Neural Processing Unit (NPU) with <strong class="text-cyan-400">38 TOPS</strong> of compute power is specifically designed for low-precision integer operations — exactly what BitNet needs.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-gray-900 rounded-xl p-6 border border-gray-800">
+                    <h3 class="text-lg font-bold text-white mb-4">M5 Pro NPU Specifications</h3>
+                    <dl class="space-y-3 text-sm">
+                        <div class="flex justify-between">
+                            <dt class="text-gray-400">NPU Performance</dt>
+                            <dd class="text-cyan-400 mono font-bold">38 TOPS</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="text-gray-400">Neural Engine Cores</dt>
+                            <dd class="text-white mono">16 cores</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="text-gray-400">GPU Neural Accelerators</dt>
+                            <dd class="text-white mono">Per-core</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="text-gray-400">Metal API</dt>
+                            <dd class="text-white mono">Metal 4</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="text-gray-400">Unified Memory</dt>
+                            <dd class="text-white mono">Up to 48 GB</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="text-gray-400">Memory Bandwidth</dt>
+                            <dd class="text-white mono">200 GB/s</dd>
+                        </div>
+                    </dl>
+                </div>
+                <div class="bg-gray-900 rounded-xl p-6 border border-gray-800">
+                    <h3 class="text-lg font-bold text-white mb-4">BitNet on M5 Pro: Projections</h3>
+                    <dl class="space-y-3 text-sm">
+                        <div class="flex justify-between">
+                            <dt class="text-gray-400">7B model speed</dt>
+                            <dd class="text-green-400 mono font-bold">~120 tok/s</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="text-gray-400">7B model memory</dt>
+                            <dd class="text-green-400 mono font-bold">1.4 GB</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="text-gray-400">70B model speed</dt>
+                            <dd class="text-green-400 mono font-bold">~25 tok/s</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="text-gray-400">70B model memory</dt>
+                            <dd class="text-green-400 mono font-bold">13.9 GB</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="text-gray-400">Metal 4 Tensor APIs</dt>
+                            <dd class="text-green-400 mono">Native INT2</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="text-gray-400">Power draw (7B)</dt>
+                            <dd class="text-green-400 mono font-bold">~5W</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="code-block p-4">
+                <div class="text-xs text-gray-500 mb-2 mono">// Metal 4 Tensor API — BitNet kernel dispatch (pseudocode)</div>
+<pre class="mono text-sm text-green-400">
+<span class="text-gray-500">// Apple Metal 4 shader for ternary matrix multiplication</span>
+<span class="text-cyan-400">kernel void</span> bitnet_ternary_gemm(
+    <span class="text-cyan-400">device const</span> int8_t* activations [[buffer(0)]],
+    <span class="text-cyan-400">device const</span> uint8_t* packed_weights [[buffer(1)]],  <span class="text-gray-500">// 4 ternary per byte</span>
+    <span class="text-cyan-400">device</span> int32_t* output [[buffer(2)]],
+    <span class="text-cyan-400">uint2</span> gid [[thread_position_in_grid]]
+) {
+    int32_t acc = 0;
+    <span class="text-cyan-400">for</span> (int k = 0; k < K/4; k++) {
+        uint8_t packed = packed_weights[gid.y * K/4 + k];
+        <span class="text-cyan-400">for</span> (int i = 0; i < 4; i++) {
+            int8_t w = (packed >> (i*2)) & 0x3;  <span class="text-gray-500">// extract 2-bit ternary</span>
+            int8_t a = activations[gid.x * K + k*4 + i];
+            <span class="text-cyan-400">if</span> (w == 1) acc += a;       <span class="text-gray-500">// +1: add</span>
+            <span class="text-cyan-400">else if</span> (w == 2) acc -= a;  <span class="text-gray-500">// -1: subtract</span>
+            <span class="text-gray-500">// w == 0: skip (sparsity)</span>
+        }
+    }
+    output[gid.y * M + gid.x] = acc;
+}
+</pre>
+            </div>
+        </section>
+
+        <!-- Section 6: Bitcoin + Energy -->
+        <section id="bitcoin-energy" class="mb-16">
+            <h2 class="text-3xl font-bold mb-6 text-white">6. BitNet + Bitcoin: Energy Convergence</h2>
+
+            <p class="text-gray-300 leading-relaxed mb-6">
+                Bitcoin's proof-of-work mining consumes approximately 150 TWh annually. AI model training and inference is projected to consume 500 TWh by 2030. BitNet's 55-82% energy reduction isn't just an engineering achievement — it's an <strong class="text-cyan-400">environmental necessity</strong> that aligns perfectly with Bitcoin's evolving sustainability narrative.
+            </p>
+
+            <div class="grid md:grid-cols-3 gap-4 mb-8">
+                <div class="bg-orange-500/5 border border-orange-500/20 rounded-lg p-4 text-center">
+                    <div class="text-2xl mb-2">&#8383;</div>
+                    <div class="text-sm font-bold text-orange-400">Bitcoin Mining</div>
+                    <div class="text-xs text-gray-400 mt-1">150 TWh/year</div>
+                    <div class="text-xs text-gray-500">SHA-256 hash operations</div>
+                </div>
+                <div class="bg-blue-500/5 border border-blue-500/20 rounded-lg p-4 text-center">
+                    <div class="text-2xl mb-2">&#129302;</div>
+                    <div class="text-sm font-bold text-blue-400">Standard AI (FP16)</div>
+                    <div class="text-xs text-gray-400 mt-1">~500 TWh/year by 2030</div>
+                    <div class="text-xs text-gray-500">Floating-point multiply</div>
+                </div>
+                <div class="bg-green-500/5 border border-green-500/20 rounded-lg p-4 text-center">
+                    <div class="text-2xl mb-2">&#9889;</div>
+                    <div class="text-sm font-bold text-green-400">BitNet AI (1.58-bit)</div>
+                    <div class="text-xs text-gray-400 mt-1">~90 TWh/year by 2030</div>
+                    <div class="text-xs text-gray-500">Integer add/sub only</div>
+                </div>
+            </div>
+
+            <p class="text-gray-300 leading-relaxed">
+                Standard Bitcoin's vision of efficient, decentralized finance combined with BitNet's ultra-efficient AI creates a powerful synergy. An AI search engine running on 1.58-bit models consumes less energy than a household light bulb, while delivering intelligence comparable to full-precision models. This is the foundation of Sintex.AI's technology stack.
+            </p>
+        </section>
+
+        <!-- Section 7: Sintex.AI Integration -->
+        <section id="sintex-integration" class="mb-16">
+            <h2 class="text-3xl font-bold mb-6 text-white">7. Sintex.AI Search Engine Integration</h2>
+
+            <p class="text-gray-300 leading-relaxed mb-6">
+                Sintex.AI is building the world's first search engine powered by BitNet 1.58-bit LLM technology. Instead of traditional keyword matching, queries are processed through a ternary neural network that understands intent, context, and relationships — all while consuming a fraction of the energy of conventional AI search.
+            </p>
+
+            <div class="bg-gray-900 rounded-xl p-6 border border-gray-800 mb-6">
+                <h3 class="text-lg font-bold text-white mb-4">Architecture Overview</h3>
+                <div class="code-block p-4">
+<pre class="mono text-xs text-cyan-400">
+User Query ──&gt; [Tokenizer] ──&gt; [BitNet b1.58 2B-4T] ──&gt; [Answer Generation]
+                                      │
+                                      ├── Ternary weights: {-1, 0, +1}
+                                      ├── 8-bit activations
+                                      ├── 2 billion parameters
+                                      └── ~0.4 GB memory footprint
+
+Server Stack:
+┌──────────────────────────────────────────────────┐
+│  Netlify Edge (CDN)                              │
+│  └── /api/search ──&gt; Netlify Function (proxy)    │
+│       └── BitNet Inference Server (:8080)         │
+│            ├── Model: BitNet-b1.58-2B-4T          │
+│            ├── Quantization: i2_s                 │
+│            ├── Context: 2048 tokens               │
+│            └── Threads: 4 (ARM64 NEON)            │
+│                                                    │
+│  Fallback Chain:                                  │
+│  BitNet ──&gt; Groq API ──&gt; Together AI ──&gt; Cache    │
+└──────────────────────────────────────────────────┘
+</pre>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap gap-4">
+                <a href="/search.html" class="inline-flex items-center gap-2 px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-black font-bold rounded-lg transition">
+                    Try AI Search
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </a>
+                <a href="/binary-computing.html" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-lg transition border border-gray-700">
+                    Binary Computing Deep Dive
+                </a>
+            </div>
+        </section>
+
+        <!-- Cross-site links -->
+        <section class="border-t border-gray-800 pt-8">
+            <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Related Research</h3>
+            <div class="grid md:grid-cols-3 gap-4">
+                <a href="https://www.standardbitcoin.io/bitnet-ai-bitcoin.html" class="block p-4 bg-gray-900 rounded-lg border border-gray-800 hover:border-orange-500/50 transition">
+                    <div class="text-orange-400 font-bold mb-1">Standard Bitcoin</div>
+                    <div class="text-sm text-gray-400">1-bit AI + Bitcoin Energy Efficiency</div>
+                </a>
+                <a href="https://bitcoinbrasil.org/bitnet" class="block p-4 bg-gray-900 rounded-lg border border-gray-800 hover:border-green-500/50 transition">
+                    <div class="text-green-400 font-bold mb-1">Bitcoin Brasil</div>
+                    <div class="text-sm text-gray-400">BitNet Research em Portugues</div>
+                </a>
+                <a href="/binary-computing.html" class="block p-4 bg-gray-900 rounded-lg border border-gray-800 hover:border-purple-500/50 transition">
+                    <div class="text-purple-400 font-bold mb-1">Binary Computing</div>
+                    <div class="text-sm text-gray-400">Ternary Weight Visualization</div>
+                </a>
+            </div>
+        </section>
+    </article>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-800 py-6 text-center text-xs text-gray-500">
+        <p>&copy; 2026 Sintex.AI &mdash; Powered by BitNet 1.58-bit Ternary LLM Technology</p>
+        <p class="mt-1">
+            <a href="/" class="hover:text-white">Search</a> &middot;
+            <a href="/bitnet-research.html" class="hover:text-white">BitNet Research</a> &middot;
+            <a href="/binary-computing.html" class="hover:text-white">Binary Computing</a> &middot;
+            <a href="https://www.standardbitcoin.io" class="hover:text-white">Standard Bitcoin</a> &middot;
+            <a href="https://bitcoinbrasil.org" class="hover:text-white">Bitcoin Brasil</a>
+        </p>
+    </footer>
+
+    <script>
+        // Generate ternary weight matrix visualization
+        const matrix = document.getElementById('ternary-matrix');
+        if (matrix) {
+            const values = [-1, 0, 1];
+            const weights = [0.3, 0.35, 0.35]; // ~35% sparsity
+            for (let i = 0; i < 256; i++) {
+                const r = Math.random();
+                let val = r < weights[0] ? -1 : (r < weights[0] + weights[1] ? 0 : 1);
+                const el = document.createElement('span');
+                el.className = `ternary-vis ${val === -1 ? 't-neg' : val === 0 ? 't-zero' : 't-pos'}`;
+                el.title = `Weight: ${val}`;
+                matrix.appendChild(el);
+            }
+        }
+
+        // Animate performance bars on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const bars = entry.target.querySelectorAll('.perf-bar');
+                    bars.forEach(bar => {
+                        bar.style.width = bar.dataset.target + '%';
+                    });
+                }
+            });
+        }, { threshold: 0.3 });
+
+        const perfSection = document.getElementById('performance');
+        if (perfSection) observer.observe(perfSection);
+    </script>
+</body>
+</html>

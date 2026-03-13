@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sintex.AI Search — BitNet-Powered AI Search Engine</title>
+    <meta name="description" content="Search the web with Sintex.AI's BitNet 1.58-bit LLM powered search engine. Get intelligent AI answers using ternary neural network technology.">
+    <meta name="keywords" content="AI search engine, BitNet search, 1-bit LLM search, Sintex AI, decentralized search">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://sintex.ai/search.html">
+
+    <meta property="og:title" content="Sintex.AI — BitNet-Powered AI Search">
+    <meta property="og:description" content="Intelligent search powered by 1.58-bit ternary LLM technology. Fast, efficient, decentralized.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sintex.ai/search.html">
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Sintex.AI",
+        "url": "https://sintex.ai",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://sintex.ai/search.html?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #e0e0e0; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .search-glow:focus { box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.3); }
+        @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .thinking-dot { animation: pulse-dot 1.2s ease-in-out infinite; }
+        .thinking-dot:nth-child(2) { animation-delay: 0.2s; }
+        .thinking-dot:nth-child(3) { animation-delay: 0.4s; }
+        .result-card { transition: all 0.2s; }
+        .result-card:hover { background: rgba(255,255,255,0.03); }
+        .markdown-content h1, .markdown-content h2, .markdown-content h3 { font-weight: 700; margin: 1em 0 0.5em; }
+        .markdown-content h1 { font-size: 1.5em; }
+        .markdown-content h2 { font-size: 1.25em; }
+        .markdown-content p { margin: 0.5em 0; line-height: 1.7; }
+        .markdown-content ul, .markdown-content ol { margin: 0.5em 0; padding-left: 1.5em; }
+        .markdown-content li { margin: 0.25em 0; }
+        .markdown-content code { background: #1a1a1a; padding: 0.15em 0.4em; border-radius: 4px; font-size: 0.9em; }
+        .markdown-content pre { background: #111; padding: 1em; border-radius: 8px; overflow-x: auto; margin: 0.5em 0; }
+        .markdown-content strong { color: #fff; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <nav class="border-b border-gray-800 bg-black/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+            <a href="/" class="text-xl font-bold shrink-0">
+                <span class="text-blue-500">Sintex</span><span class="text-gray-400">.</span><span class="text-green-500">AI</span>
+            </a>
+            <!-- Search bar in nav -->
+            <div class="flex-1 max-w-2xl">
+                <div class="flex items-center bg-gray-900 border border-gray-700 rounded-full px-4 py-2 focus-within:border-cyan-500 transition">
+                    <svg class="w-4 h-4 text-gray-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <input type="text" id="search-input" placeholder="Ask anything..." class="w-full bg-transparent ml-3 text-white focus:outline-none text-sm" autofocus>
+                    <button onclick="performSearch()" class="ml-2 px-3 py-1 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-medium rounded-full transition shrink-0">Search</button>
+                </div>
+            </div>
+            <div class="hidden md:flex items-center gap-3 text-xs">
+                <a href="/bitnet-research.html" class="text-gray-400 hover:text-white">Research</a>
+                <a href="/binary-computing.html" class="text-gray-400 hover:text-white">Binary</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-1 max-w-4xl mx-auto w-full px-4 py-8">
+        <!-- Initial state: search suggestions -->
+        <div id="initial-state" class="text-center py-16">
+            <h1 class="text-3xl font-bold mb-4">
+                <span class="text-cyan-400">AI-Powered</span> Search
+            </h1>
+            <p class="text-gray-400 mb-8">Powered by BitNet 1.58-bit ternary LLM technology</p>
+
+            <div class="grid md:grid-cols-2 gap-3 max-w-xl mx-auto text-left">
+                <button onclick="quickSearch('What is BitNet 1.58-bit LLM?')" class="p-3 bg-gray-900 border border-gray-800 rounded-lg hover:border-cyan-500/50 transition text-sm text-gray-300 text-left">
+                    <span class="text-cyan-400 mr-2">?</span> What is BitNet 1.58-bit LLM?
+                </button>
+                <button onclick="quickSearch('How does ternary quantization work?')" class="p-3 bg-gray-900 border border-gray-800 rounded-lg hover:border-cyan-500/50 transition text-sm text-gray-300 text-left">
+                    <span class="text-cyan-400 mr-2">?</span> How does ternary quantization work?
+                </button>
+                <button onclick="quickSearch('Bitcoin energy efficiency with AI')" class="p-3 bg-gray-900 border border-gray-800 rounded-lg hover:border-cyan-500/50 transition text-sm text-gray-300 text-left">
+                    <span class="text-cyan-400 mr-2">?</span> Bitcoin energy efficiency with AI
+                </button>
+                <button onclick="quickSearch('Apple M5 Pro NPU specifications')" class="p-3 bg-gray-900 border border-gray-800 rounded-lg hover:border-cyan-500/50 transition text-sm text-gray-300 text-left">
+                    <span class="text-cyan-400 mr-2">?</span> Apple M5 Pro NPU specifications
+                </button>
+            </div>
+        </div>
+
+        <!-- Search results area -->
+        <div id="results-area" class="hidden">
+            <!-- AI Answer -->
+            <div id="ai-answer-section" class="mb-8 hidden">
+                <div class="flex items-center gap-2 mb-3">
+                    <div class="w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center">
+                        <svg class="w-3 h-3 text-cyan-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11H9v-2h2v2zm0-4H9V5h2v4z"/></svg>
+                    </div>
+                    <span class="text-sm font-medium text-cyan-400">AI Answer</span>
+                    <span class="text-xs text-gray-600 mono">BitNet b1.58</span>
+                </div>
+                <div id="ai-answer" class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 markdown-content text-gray-300 text-sm leading-relaxed"></div>
+            </div>
+
+            <!-- Thinking indicator -->
+            <div id="thinking" class="hidden mb-6">
+                <div class="flex items-center gap-3 text-gray-400">
+                    <div class="flex gap-1">
+                        <span class="thinking-dot w-2 h-2 bg-cyan-400 rounded-full"></span>
+                        <span class="thinking-dot w-2 h-2 bg-cyan-400 rounded-full"></span>
+                        <span class="thinking-dot w-2 h-2 bg-cyan-400 rounded-full"></span>
+                    </div>
+                    <span class="text-sm">Searching with BitNet inference...</span>
+                </div>
+            </div>
+
+            <!-- Web results -->
+            <div id="web-results" class="space-y-4">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- Related searches -->
+            <div id="related" class="mt-8 hidden">
+                <h3 class="text-sm font-medium text-gray-400 mb-3">Related searches</h3>
+                <div id="related-list" class="flex flex-wrap gap-2"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="border-t border-gray-800 py-4 text-center text-xs text-gray-600">
+        <a href="/" class="hover:text-white">Home</a> &middot;
+        <a href="/bitnet-research.html" class="hover:text-white">Research</a> &middot;
+        <a href="/binary-computing.html" class="hover:text-white">Binary</a> &middot;
+        <a href="https://www.standardbitcoin.io" class="hover:text-white">Standard Bitcoin</a>
+    </footer>
+
+    <script src="bitnet-client.js"></script>
+    <script>
+        const searchInput = document.getElementById('search-input');
+        const initialState = document.getElementById('initial-state');
+        const resultsArea = document.getElementById('results-area');
+        const thinking = document.getElementById('thinking');
+        const aiAnswerSection = document.getElementById('ai-answer-section');
+        const aiAnswer = document.getElementById('ai-answer');
+        const webResults = document.getElementById('web-results');
+        const relatedDiv = document.getElementById('related');
+        const relatedList = document.getElementById('related-list');
+
+        // Check URL params for query
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlQuery = urlParams.get('q');
+        if (urlQuery) {
+            searchInput.value = urlQuery;
+            performSearch();
+        }
+
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performSearch();
+        });
+
+        function quickSearch(query) {
+            searchInput.value = query;
+            performSearch();
+        }
+
+        async function performSearch() {
+            const query = searchInput.value.trim();
+            if (!query) return;
+
+            // Update URL
+            history.pushState(null, '', `?q=${encodeURIComponent(query)}`);
+
+            // Show results area
+            initialState.classList.add('hidden');
+            resultsArea.classList.remove('hidden');
+            thinking.classList.remove('hidden');
+            aiAnswerSection.classList.add('hidden');
+            webResults.innerHTML = '';
+            relatedDiv.classList.add('hidden');
+
+            try {
+                // Use BitNet client
+                const result = await BitNetClient.search(query);
+
+                thinking.classList.add('hidden');
+
+                // Show AI answer
+                if (result.answer) {
+                    aiAnswer.innerHTML = formatMarkdown(result.answer);
+                    aiAnswerSection.classList.remove('hidden');
+                }
+
+                // Show web results
+                if (result.sources && result.sources.length > 0) {
+                    webResults.innerHTML = result.sources.map(s => `
+                        <a href="${s.url}" target="_blank" class="result-card block p-4 rounded-lg border border-gray-800/50">
+                            <div class="text-xs text-gray-500 mb-1 truncate">${s.url}</div>
+                            <div class="text-blue-400 font-medium mb-1 hover:underline">${s.title}</div>
+                            <div class="text-sm text-gray-400">${s.snippet}</div>
+                        </a>
+                    `).join('');
+                }
+
+                // Related searches
+                if (result.related && result.related.length > 0) {
+                    relatedList.innerHTML = result.related.map(r =>
+                        `<button onclick="quickSearch('${r.replace(/'/g, "\\'")}')" class="px-3 py-1.5 bg-gray-900 border border-gray-800 rounded-full text-xs text-gray-400 hover:text-white hover:border-gray-600 transition">${r}</button>`
+                    ).join('');
+                    relatedDiv.classList.remove('hidden');
+                }
+            } catch (err) {
+                thinking.classList.add('hidden');
+                aiAnswer.innerHTML = `<p class="text-red-400">Search encountered an error. Falling back to cached knowledge base.</p><p class="text-gray-400 mt-2">${err.message}</p>`;
+                aiAnswerSection.classList.remove('hidden');
+            }
+        }
+
+        function formatMarkdown(text) {
+            return text
+                .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
+                .replace(/`([^`]+)`/g, '<code>$1</code>')
+                .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+                .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+                .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+                .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+                .replace(/^\- (.*$)/gm, '<li>$1</li>')
+                .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/\n/g, '<br>');
+        }
+    </script>
+</body>
+</html>

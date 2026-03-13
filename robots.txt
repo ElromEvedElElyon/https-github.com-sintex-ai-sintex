@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sintex.ai/sitemap.xml
+
+# Sintex.AI — BitNet-Powered AI Search Engine
+# https://sintex.ai
