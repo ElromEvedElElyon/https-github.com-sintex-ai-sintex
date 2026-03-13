@@ -3,241 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sintex.AI Search — BitNet-Powered AI Search Engine</title>
-    <meta name="description" content="Search the web with Sintex.AI's BitNet 1.58-bit LLM powered search engine. Get intelligent AI answers using ternary neural network technology.">
-    <meta name="keywords" content="AI search engine, BitNet search, 1-bit LLM search, Sintex AI, decentralized search">
+    <title>Sintex.AI — Open Source AI Search Engine</title>
+    <meta name="description" content="Sintex.AI: Open-source AI search engine powered by BitNet 1.58-bit ternary LLM. Like Perplexity, but free, open, and runs on any device. Research begins here.">
+    <meta name="keywords" content="AI search, open source search engine, BitNet, Perplexity alternative, Sintex AI, ternary LLM, decentralized AI">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://sintex.ai/search.html">
-
-    <meta property="og:title" content="Sintex.AI — BitNet-Powered AI Search">
-    <meta property="og:description" content="Intelligent search powered by 1.58-bit ternary LLM technology. Fast, efficient, decentralized.">
+    <meta property="og:title" content="Sintex.AI — Open Source AI Search Engine">
+    <meta property="og:description" content="AI search powered by BitNet 1.58-bit. Like Perplexity, but open source and runs anywhere.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://sintex.ai/search.html">
-
     <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "Sintex.AI",
-        "url": "https://sintex.ai",
-        "potentialAction": {
-            "@type": "SearchAction",
-            "target": "https://sintex.ai/search.html?q={search_term_string}",
-            "query-input": "required name=search_term_string"
-        }
-    }
+    {"@context":"https://schema.org","@type":"WebApplication","name":"Sintex.AI Search","url":"https://sintex.ai/search.html","applicationCategory":"SearchApplication","operatingSystem":"Any","description":"Open-source AI search engine powered by BitNet 1.58-bit ternary LLM","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"Sintex.AI"}}
     </script>
-
-    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #e0e0e0; }
-        .mono { font-family: 'JetBrains Mono', monospace; }
-        .search-glow:focus { box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.3); }
-        @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        .thinking-dot { animation: pulse-dot 1.2s ease-in-out infinite; }
-        .thinking-dot:nth-child(2) { animation-delay: 0.2s; }
-        .thinking-dot:nth-child(3) { animation-delay: 0.4s; }
-        .result-card { transition: all 0.2s; }
-        .result-card:hover { background: rgba(255,255,255,0.03); }
-        .markdown-content h1, .markdown-content h2, .markdown-content h3 { font-weight: 700; margin: 1em 0 0.5em; }
-        .markdown-content h1 { font-size: 1.5em; }
-        .markdown-content h2 { font-size: 1.25em; }
-        .markdown-content p { margin: 0.5em 0; line-height: 1.7; }
-        .markdown-content ul, .markdown-content ol { margin: 0.5em 0; padding-left: 1.5em; }
-        .markdown-content li { margin: 0.25em 0; }
-        .markdown-content code { background: #1a1a1a; padding: 0.15em 0.4em; border-radius: 4px; font-size: 0.9em; }
-        .markdown-content pre { background: #111; padding: 1em; border-radius: 8px; overflow-x: auto; margin: 0.5em 0; }
-        .markdown-content strong { color: #fff; }
-    </style>
+    <link rel="stylesheet" href="sintex-search.css">
 </head>
-<body class="min-h-screen flex flex-col">
-    <!-- Navigation -->
-    <nav class="border-b border-gray-800 bg-black/80 backdrop-blur sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
-            <a href="/" class="text-xl font-bold shrink-0">
-                <span class="text-blue-500">Sintex</span><span class="text-gray-400">.</span><span class="text-green-500">AI</span>
+<body>
+    <!-- Nav -->
+    <nav class="s-nav">
+        <div class="s-nav-inner">
+            <a href="/" class="s-logo">
+                <div class="s-logo-icon">S</div>
+                <span>Sintex<span style="color:var(--s-text3)">.AI</span></span>
             </a>
-            <!-- Search bar in nav -->
-            <div class="flex-1 max-w-2xl">
-                <div class="flex items-center bg-gray-900 border border-gray-700 rounded-full px-4 py-2 focus-within:border-cyan-500 transition">
-                    <svg class="w-4 h-4 text-gray-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    <input type="text" id="search-input" placeholder="Ask anything..." class="w-full bg-transparent ml-3 text-white focus:outline-none text-sm" autofocus>
-                    <button onclick="performSearch()" class="ml-2 px-3 py-1 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-medium rounded-full transition shrink-0">Search</button>
-                </div>
-            </div>
-            <div class="hidden md:flex items-center gap-3 text-xs">
-                <a href="/bitnet-research.html" class="text-gray-400 hover:text-white">Research</a>
-                <a href="/binary-computing.html" class="text-gray-400 hover:text-white">Binary</a>
+            <div class="s-nav-links">
+                <a href="/bitnet-research.html" class="s-nav-btn">Research</a>
+                <a href="/binary-computing.html" class="s-nav-btn">Binary</a>
+                <a href="https://www.standardbitcoin.io" class="s-nav-btn" target="_blank">Bitcoin</a>
+                <button class="s-nav-btn s-theme-btn" id="theme-toggle" title="Toggle theme">
+                    <svg id="theme-icon-dark" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                    <svg id="theme-icon-light" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                </button>
             </div>
         </div>
     </nav>
 
-    <main class="flex-1 max-w-4xl mx-auto w-full px-4 py-8">
-        <!-- Initial state: search suggestions -->
-        <div id="initial-state" class="text-center py-16">
-            <h1 class="text-3xl font-bold mb-4">
-                <span class="text-cyan-400">AI-Powered</span> Search
-            </h1>
-            <p class="text-gray-400 mb-8">Powered by BitNet 1.58-bit ternary LLM technology</p>
-
-            <div class="grid md:grid-cols-2 gap-3 max-w-xl mx-auto text-left">
-                <button onclick="quickSearch('What is BitNet 1.58-bit LLM?')" class="p-3 bg-gray-900 border border-gray-800 rounded-lg hover:border-cyan-500/50 transition text-sm text-gray-300 text-left">
-                    <span class="text-cyan-400 mr-2">?</span> What is BitNet 1.58-bit LLM?
-                </button>
-                <button onclick="quickSearch('How does ternary quantization work?')" class="p-3 bg-gray-900 border border-gray-800 rounded-lg hover:border-cyan-500/50 transition text-sm text-gray-300 text-left">
-                    <span class="text-cyan-400 mr-2">?</span> How does ternary quantization work?
-                </button>
-                <button onclick="quickSearch('Bitcoin energy efficiency with AI')" class="p-3 bg-gray-900 border border-gray-800 rounded-lg hover:border-cyan-500/50 transition text-sm text-gray-300 text-left">
-                    <span class="text-cyan-400 mr-2">?</span> Bitcoin energy efficiency with AI
-                </button>
-                <button onclick="quickSearch('Apple M5 Pro NPU specifications')" class="p-3 bg-gray-900 border border-gray-800 rounded-lg hover:border-cyan-500/50 transition text-sm text-gray-300 text-left">
-                    <span class="text-cyan-400 mr-2">?</span> Apple M5 Pro NPU specifications
-                </button>
+    <div class="s-main" id="app">
+        <!-- Empty State (shown when no conversation) -->
+        <div class="s-empty" id="empty-state">
+            <div class="s-empty-title">Research begins here.</div>
+            <div class="s-empty-subtitle">Open-source AI search powered by BitNet 1.58-bit</div>
+            <div class="s-input-wrap">
+                <div class="s-input-box">
+                    <textarea class="s-input-textarea" id="search-input" placeholder="Ask anything..." rows="1"></textarea>
+                    <button class="s-send-btn" id="send-btn" title="Search">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="s-chips" id="suggestion-chips">
+                <button class="s-chip" data-q="What is BitNet 1.58-bit LLM?">What is BitNet 1.58-bit?</button>
+                <button class="s-chip" data-q="How does ternary quantization work in AI?">Ternary quantization</button>
+                <button class="s-chip" data-q="Bitcoin energy efficiency and AI">Bitcoin + AI energy</button>
+                <button class="s-chip" data-q="Compare Sintex.AI vs Perplexity">Sintex vs Perplexity</button>
+                <button class="s-chip" data-q="Apple M5 Pro NPU for AI inference">M5 Pro NPU</button>
+                <button class="s-chip" data-q="What is STBTCx token?">STBTCx token</button>
             </div>
         </div>
 
-        <!-- Search results area -->
-        <div id="results-area" class="hidden">
-            <!-- AI Answer -->
-            <div id="ai-answer-section" class="mb-8 hidden">
-                <div class="flex items-center gap-2 mb-3">
-                    <div class="w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center">
-                        <svg class="w-3 h-3 text-cyan-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11H9v-2h2v2zm0-4H9V5h2v4z"/></svg>
-                    </div>
-                    <span class="text-sm font-medium text-cyan-400">AI Answer</span>
-                    <span class="text-xs text-gray-600 mono">BitNet b1.58</span>
-                </div>
-                <div id="ai-answer" class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 markdown-content text-gray-300 text-sm leading-relaxed"></div>
-            </div>
+        <!-- Conversation (shown after first search) -->
+        <div class="s-conversation" id="conversation" style="display:none"></div>
+    </div>
 
-            <!-- Thinking indicator -->
-            <div id="thinking" class="hidden mb-6">
-                <div class="flex items-center gap-3 text-gray-400">
-                    <div class="flex gap-1">
-                        <span class="thinking-dot w-2 h-2 bg-cyan-400 rounded-full"></span>
-                        <span class="thinking-dot w-2 h-2 bg-cyan-400 rounded-full"></span>
-                        <span class="thinking-dot w-2 h-2 bg-cyan-400 rounded-full"></span>
-                    </div>
-                    <span class="text-sm">Searching with BitNet inference...</span>
-                </div>
-            </div>
-
-            <!-- Web results -->
-            <div id="web-results" class="space-y-4">
-                <!-- Populated by JS -->
-            </div>
-
-            <!-- Related searches -->
-            <div id="related" class="mt-8 hidden">
-                <h3 class="text-sm font-medium text-gray-400 mb-3">Related searches</h3>
-                <div id="related-list" class="flex flex-wrap gap-2"></div>
+    <!-- Sticky Input (appears after conversation starts) -->
+    <div class="s-input-sticky" id="sticky-input" style="display:none">
+        <div class="s-input-wrap">
+            <div class="s-input-box">
+                <textarea class="s-input-textarea" id="search-input-sticky" placeholder="Ask a follow-up..." rows="1"></textarea>
+                <button class="s-send-btn" id="send-btn-sticky" title="Search">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
+                </button>
             </div>
         </div>
-    </main>
+    </div>
 
-    <footer class="border-t border-gray-800 py-4 text-center text-xs text-gray-600">
-        <a href="/" class="hover:text-white">Home</a> &middot;
-        <a href="/bitnet-research.html" class="hover:text-white">Research</a> &middot;
-        <a href="/binary-computing.html" class="hover:text-white">Binary</a> &middot;
-        <a href="https://www.standardbitcoin.io" class="hover:text-white">Standard Bitcoin</a>
-    </footer>
+    <!-- OS Taskbar -->
+    <div class="s-os-bar" id="os-taskbar">
+        <div class="s-os-icon active" title="Search" onclick="goHome()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        </div>
+        <div class="s-os-icon" title="BitNet Research" onclick="window.open('/bitnet-research.html','_blank')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <div class="s-os-icon" title="Standard Bitcoin" onclick="window.open('https://www.standardbitcoin.io','_blank')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 14.93V18h-2v-1.07A4 4 0 018 13h2a2 2 0 104 0c0 .87-.56 1.64-1.38 1.91L12 15.12V13h1a4 4 0 001-7.93V4h-2v1.07A4 4 0 008 9h2a2 2 0 114 0c0-.87.56-1.64 1.38-1.91L12 6.88V9h-1a4 4 0 00-1 7.93z"/></svg>
+        </div>
+        <div class="s-os-icon" title="Bitcoin Brasil" onclick="window.open('https://bitcoinbrasil.org','_blank')">&#127463;&#127479;</div>
+        <div class="s-os-icon" title="Buy STBTCx" onclick="window.open('https://pump.fun/coin/386JZJtkvf43yoNawAHmHHeEhZWUTZ4UuJJtxC9fpump','_blank')">&#129689;</div>
+        <span class="s-os-clock" id="os-clock"></span>
+    </div>
 
     <script src="bitnet-client.js"></script>
-    <script>
-        const searchInput = document.getElementById('search-input');
-        const initialState = document.getElementById('initial-state');
-        const resultsArea = document.getElementById('results-area');
-        const thinking = document.getElementById('thinking');
-        const aiAnswerSection = document.getElementById('ai-answer-section');
-        const aiAnswer = document.getElementById('ai-answer');
-        const webResults = document.getElementById('web-results');
-        const relatedDiv = document.getElementById('related');
-        const relatedList = document.getElementById('related-list');
-
-        // Check URL params for query
-        const urlParams = new URLSearchParams(window.location.search);
-        const urlQuery = urlParams.get('q');
-        if (urlQuery) {
-            searchInput.value = urlQuery;
-            performSearch();
-        }
-
-        searchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') performSearch();
-        });
-
-        function quickSearch(query) {
-            searchInput.value = query;
-            performSearch();
-        }
-
-        async function performSearch() {
-            const query = searchInput.value.trim();
-            if (!query) return;
-
-            // Update URL
-            history.pushState(null, '', `?q=${encodeURIComponent(query)}`);
-
-            // Show results area
-            initialState.classList.add('hidden');
-            resultsArea.classList.remove('hidden');
-            thinking.classList.remove('hidden');
-            aiAnswerSection.classList.add('hidden');
-            webResults.innerHTML = '';
-            relatedDiv.classList.add('hidden');
-
-            try {
-                // Use BitNet client
-                const result = await BitNetClient.search(query);
-
-                thinking.classList.add('hidden');
-
-                // Show AI answer
-                if (result.answer) {
-                    aiAnswer.innerHTML = formatMarkdown(result.answer);
-                    aiAnswerSection.classList.remove('hidden');
-                }
-
-                // Show web results
-                if (result.sources && result.sources.length > 0) {
-                    webResults.innerHTML = result.sources.map(s => `
-                        <a href="${s.url}" target="_blank" class="result-card block p-4 rounded-lg border border-gray-800/50">
-                            <div class="text-xs text-gray-500 mb-1 truncate">${s.url}</div>
-                            <div class="text-blue-400 font-medium mb-1 hover:underline">${s.title}</div>
-                            <div class="text-sm text-gray-400">${s.snippet}</div>
-                        </a>
-                    `).join('');
-                }
-
-                // Related searches
-                if (result.related && result.related.length > 0) {
-                    relatedList.innerHTML = result.related.map(r =>
-                        `<button onclick="quickSearch('${r.replace(/'/g, "\\'")}')" class="px-3 py-1.5 bg-gray-900 border border-gray-800 rounded-full text-xs text-gray-400 hover:text-white hover:border-gray-600 transition">${r}</button>`
-                    ).join('');
-                    relatedDiv.classList.remove('hidden');
-                }
-            } catch (err) {
-                thinking.classList.add('hidden');
-                aiAnswer.innerHTML = `<p class="text-red-400">Search encountered an error. Falling back to cached knowledge base.</p><p class="text-gray-400 mt-2">${err.message}</p>`;
-                aiAnswerSection.classList.remove('hidden');
-            }
-        }
-
-        function formatMarkdown(text) {
-            return text
-                .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
-                .replace(/`([^`]+)`/g, '<code>$1</code>')
-                .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*([^*]+)\*/g, '<em>$1</em>')
-                .replace(/^### (.*$)/gm, '<h3>$1</h3>')
-                .replace(/^## (.*$)/gm, '<h2>$1</h2>')
-                .replace(/^# (.*$)/gm, '<h1>$1</h1>')
-                .replace(/^\- (.*$)/gm, '<li>$1</li>')
-                .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
-                .replace(/\n\n/g, '</p><p>')
-                .replace(/\n/g, '<br>');
-        }
-    </script>
+    <script src="sintex-search.js"></script>
 </body>
 </html>
