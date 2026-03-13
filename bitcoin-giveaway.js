@@ -347,12 +347,18 @@ function enterGiveaway() {
     // Success message
     alert('🎉 Aguarde para uma grande aventura! Use a alavanca para jogar!');
     
-    // Optional: Send to backend
-    // fetch('/api/giveaway-entry', { 
-    //     method: 'POST',
-    //     body: JSON.stringify({ email }),
-    //     headers: { 'Content-Type': 'application/json' }
-    // });
+    // Send to Google Sheets (free database — text/plain avoids CORS preflight)
+    const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwZFdoKXWuOJelwOGgxz5KBFMqCVw3puwc1cmFIXrme_qTXBYYIJSuJrsRXBIZha0Q1/exec';
+    fetch(GOOGLE_SHEETS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+            email: email,
+            timestamp: new Date().toISOString(),
+            source: 'sintex.ai',
+            wallet: window.solana?.publicKey?.toString() || 'none'
+        })
+    }).catch(() => {});
 }
 
 // Email validation
