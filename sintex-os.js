@@ -1,1414 +1,834 @@
-/* ============================================
-   SintexOS — AI-Powered Operating System
-   BitNet 1.58-bit Ternary Engine
-   (c) Sintex.AI — Sovereign Computing
-   ============================================ */
-(function () {
-  'use strict';
+/* =============================================
+   SintexOS — AI-Native Operating System
+   Windows 11 + Perplexity + OpenClaw
+   ============================================= */
+(function(){
+'use strict';
 
-  const $ = (s, p) => (p || document).querySelector(s);
-  const $$ = (s, p) => [...(p || document).querySelectorAll(s)];
-  const sleep = ms => new Promise(r => setTimeout(r, ms));
+const $=s=>document.querySelector(s);
+const $$=s=>[...document.querySelectorAll(s)];
+const h=(t,a={})=>{const e=document.createElement(t);Object.assign(e,a);return e};
 
-  /* ========== STORAGE ========== */
-  const Storage = {
-    get(k) { try { return JSON.parse(localStorage.getItem('sos-' + k)); } catch { return null; } },
-    set(k, v) { localStorage.setItem('sos-' + k, JSON.stringify(v)); }
-  };
+// ===== SVG ICONS =====
+const ICO={
+  search:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`,
+  terminal:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>`,
+  folder:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" fill="rgba(252,185,0,.15)"/></svg>`,
+  browser:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+  note:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
+  monitor:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`,
+  settings:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
+  copilot:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a7 7 0 0 1 7 7c0 3-2 5.5-4 7l-3 3-3-3c-2-1.5-4-4-4-7a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>`,
+  agent:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="4"/><circle cx="9" cy="10" r="1.5" fill="currentColor"/><circle cx="15" cy="10" r="1.5" fill="currentColor"/><path d="M9 15c1 1 5 1 6 0"/></svg>`,
+  file:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`,
+  folderFill:`<svg width="32" height="32" viewBox="0 0 24 24" fill="rgba(252,185,0,.2)" stroke="#FCB900" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>`,
+  fileFill:`<svg width="32" height="32" viewBox="0 0 24 24" fill="rgba(96,205,255,.08)" stroke="rgba(96,205,255,.5)" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`,
+};
 
-  /* ========== STATE ========== */
-  const State = {
-    windows: new Map(),
-    zIndex: 20,
-    focusedWin: null,
-    startOpen: false,
-    settings: Storage.get('settings') || {
-      theme: 'dark', wallpaper: 'rain', accentColor: '#24A0ED', animations: true
-    },
-    isMobile: window.innerWidth <= 480
-  };
+// ===== APPS =====
+const APPS=[
+  {id:'search',name:'Sintex AI',icon:ICO.search,pin:true,w:900,h:620,color:'#60CDFF'},
+  {id:'terminal',name:'Terminal',icon:ICO.terminal,pin:true,w:780,h:480,color:'#6CCB5F'},
+  {id:'files',name:'Explorer',icon:ICO.folder,pin:true,w:800,h:520,color:'#FCB900'},
+  {id:'browser',name:'Browser',icon:ICO.browser,pin:true,w:950,h:620,color:'#B4A0FF'},
+  {id:'notepad',name:'Notepad',icon:ICO.note,pin:false,w:680,h:460,color:'#60CDFF'},
+  {id:'monitor',name:'Task Manager',icon:ICO.monitor,pin:true,w:600,h:500,color:'#FF6B6B'},
+  {id:'settings',name:'Settings',icon:ICO.settings,pin:false,w:800,h:540,color:'#999'},
+  {id:'agents',name:'OpenClaw',icon:ICO.agent,pin:true,w:740,h:520,color:'#B4A0FF'},
+];
 
-  /* ========== APP REGISTRY ========== */
-  const APPS = [
-    { id: 'sintex-ai', name: 'Sintex AI', icon: '🔍', desc: 'AI Search Engine', pin: true, w: 800, h: 560 },
-    { id: 'terminal', name: 'Terminal', icon: '⬛', desc: 'System Shell', pin: true, w: 700, h: 450 },
-    { id: 'files', name: 'Files', icon: '📁', desc: 'File Manager', pin: true, w: 700, h: 460 },
-    { id: 'browser', name: 'Browser', icon: '🌐', desc: 'Web Browser', pin: true, w: 850, h: 560 },
-    { id: 'notepad', name: 'Notepad', icon: '📝', desc: 'Text Editor', pin: false, w: 600, h: 420 },
-    { id: 'monitor', name: 'System Monitor', icon: '📊', desc: 'Performance', pin: false, w: 520, h: 440 },
-    { id: 'settings', name: 'Settings', icon: '⚙️', desc: 'System Settings', pin: false, w: 640, h: 460 },
-    { id: 'openclaw', name: 'OpenClaw', icon: '🤖', desc: 'AI Agent Hub', pin: true, w: 750, h: 520 },
-    { id: 'chatgpt', name: 'ChatGPT', icon: '💬', desc: 'AI Assistant', pin: false, w: 700, h: 520 }
-  ];
+// ===== STATE =====
+const S={
+  wins:new Map(),zi:20,focused:null,startOpen:false,searchOpen:false,
+  cfg:load('cfg')||{theme:'dark',wp:'mesh',accent:'#60CDFF'},
+  isMob:innerWidth<=768
+};
+function load(k){try{return JSON.parse(localStorage.getItem('sos-'+k))}catch{return null}}
+function save(k,v){localStorage.setItem('sos-'+k,JSON.stringify(v))}
 
-  /* ========== BOOT SEQUENCE ========== */
-  function boot() {
-    const canvas = $('#boot-canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const chars = ['-1', ' 0', '+1'];
-    const cols = Math.floor(canvas.width / 18);
-    const drops = Array(cols).fill(0).map(() => Math.random() * -50);
-    const statusEl = $('.boot-status');
-    const msgs = ['Initializing kernel...', 'Loading BitNet 1.58-bit engine...', 'Mounting ternary filesystem...',
-      'Starting window compositor...', 'Connecting OpenClaw agent...', 'System ready.'];
-    let msgIdx = 0;
-
-    const bootAnim = () => {
-      ctx.fillStyle = 'rgba(0,0,0,0.06)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.font = '14px "JetBrains Mono", monospace';
-      for (let i = 0; i < cols; i++) {
-        const ch = chars[Math.floor(Math.random() * 3)];
-        const alpha = 0.3 + Math.random() * 0.7;
-        ctx.fillStyle = `rgba(36,160,237,${alpha})`;
-        ctx.fillText(ch, i * 18, drops[i] * 18);
-        if (drops[i] * 18 > canvas.height && Math.random() > 0.975) drops[i] = 0;
-        drops[i] += 0.5 + Math.random() * 0.5;
-      }
-    };
-
-    const bootInterval = setInterval(bootAnim, 40);
-    const statusInterval = setInterval(() => {
-      if (msgIdx < msgs.length) statusEl.textContent = msgs[msgIdx++];
-    }, 380);
-
-    setTimeout(() => {
-      clearInterval(bootInterval);
-      clearInterval(statusInterval);
-      $('#os-boot').classList.add('fade-out');
-      setTimeout(() => {
-        $('#os-boot').remove();
-        initDesktop();
-      }, 800);
-    }, 2600);
-  }
-
-  /* ========== WALLPAPER ========== */
-  let wallpaperRAF = null;
-  function initWallpaper() {
-    const canvas = $('#os-wallpaper');
-    const ctx = canvas.getContext('2d');
-    const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
-    resize();
-    window.addEventListener('resize', resize);
-
-    if (State.settings.wallpaper === 'rain') {
-      const chars = ['-1', ' 0', '+1', '⚡', '█', '▓'];
-      const cols = Math.floor(canvas.width / 20);
-      const drops = Array(cols).fill(0).map(() => Math.random() * canvas.height / 20);
-      const draw = () => {
-        ctx.fillStyle = State.settings.theme === 'light' ? 'rgba(240,242,245,0.04)' : 'rgba(13,17,23,0.04)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.font = '14px "JetBrains Mono", monospace';
-        for (let i = 0; i < cols; i++) {
-          const ch = chars[Math.floor(Math.random() * chars.length)];
-          const a = 0.03 + Math.random() * 0.08;
-          ctx.fillStyle = `rgba(36,160,237,${a})`;
-          ctx.fillText(ch, i * 20, drops[i] * 20);
-          if (drops[i] * 20 > canvas.height && Math.random() > 0.98) drops[i] = 0;
-          drops[i] += 0.3;
-        }
-        wallpaperRAF = requestAnimationFrame(draw);
-      };
-      draw();
-    } else if (State.settings.wallpaper === 'gradient') {
-      const grd = ctx.createRadialGradient(canvas.width / 2, canvas.height / 2, 100, canvas.width / 2, canvas.height / 2, canvas.width);
-      grd.addColorStop(0, '#0a1628');
-      grd.addColorStop(1, '#0d1117');
-      ctx.fillStyle = grd;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-    } else {
-      ctx.fillStyle = State.settings.theme === 'light' ? '#f0f2f5' : '#0d1117';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+// ===== BOOT =====
+function boot(){
+  const c=$('#boot-fx'),ctx=c.getContext('2d');
+  c.width=innerWidth;c.height=innerHeight;
+  const cols=Math.floor(c.width/16);
+  const drops=Array(cols).fill(0).map(()=>Math.random()*-40);
+  const chars='-1 0 +1'.split(' ');
+  let frame=0;
+  const draw=()=>{
+    ctx.fillStyle='rgba(0,0,0,.05)';ctx.fillRect(0,0,c.width,c.height);
+    ctx.font='12px "JetBrains Mono"';
+    for(let i=0;i<cols;i++){
+      const ch=chars[Math.floor(Math.random()*3)];
+      ctx.fillStyle=`rgba(96,205,255,${.05+Math.random()*.12})`;
+      ctx.fillText(ch,i*16,drops[i]*16);
+      if(drops[i]*16>c.height&&Math.random()>.97)drops[i]=0;
+      drops[i]+=.4+Math.random()*.3;
     }
+    if(++frame<65)requestAnimationFrame(draw);
+  };
+  draw();
+  setTimeout(()=>{
+    $('#boot').classList.add('out');
+    setTimeout(()=>{$('#boot').remove();showLock()},600);
+  },2500);
+}
+
+// ===== LOCK SCREEN =====
+function showLock(){
+  const ls=$('#lockscreen');ls.classList.remove('hidden');
+  const updateTime=()=>{
+    const now=new Date();
+    $('#lock-time').textContent=now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    $('#lock-date').textContent=now.toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'});
+  };
+  updateTime();const ti=setInterval(updateTime,30000);
+  const unlock=()=>{ls.classList.add('hidden');clearInterval(ti);initDesktop();
+    ls.removeEventListener('click',unlock);document.removeEventListener('keydown',unlock)};
+  ls.addEventListener('click',unlock);
+  document.addEventListener('keydown',unlock);
+}
+
+// ===== DESKTOP =====
+function initDesktop(){
+  initWallpaper();initIcons();initTaskbar();initStart();initSearch();
+  initCtx();initClock();initCopilot();
+  toast('SintexOS — BitNet 1.58-bit Engine Online');
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden)stopWP();else initWallpaper();
+  });
+}
+
+// ===== WALLPAPER =====
+let wpRAF=null;
+function initWallpaper(){
+  const c=$('#wallpaper'),ctx=c.getContext('2d');
+  c.width=innerWidth;c.height=innerHeight;
+  window.addEventListener('resize',()=>{c.width=innerWidth;c.height=innerHeight});
+  if(S.cfg.wp==='mesh'){
+    // Animated gradient mesh
+    let t=0;
+    const draw=()=>{
+      t+=.003;
+      const g=ctx.createRadialGradient(
+        c.width*.5+Math.sin(t)*c.width*.2,c.height*.4+Math.cos(t*.7)*c.height*.2,c.width*.1,
+        c.width*.5,c.height*.5,c.width*.7
+      );
+      g.addColorStop(0,'#0a1628');g.addColorStop(.4,'#0d0d2b');g.addColorStop(.7,'#1a0a2e');g.addColorStop(1,'#000');
+      ctx.fillStyle=g;ctx.fillRect(0,0,c.width,c.height);
+      // Subtle particle field
+      ctx.fillStyle='rgba(96,205,255,.015)';
+      for(let i=0;i<30;i++){
+        const x=(Math.sin(t*2+i*1.3)*0.5+0.5)*c.width;
+        const y=(Math.cos(t*1.5+i*0.9)*0.5+0.5)*c.height;
+        ctx.beginPath();ctx.arc(x,y,1+Math.sin(t+i)*1,0,Math.PI*2);ctx.fill();
+      }
+      wpRAF=requestAnimationFrame(draw);
+    };
+    draw();
+  } else {
+    ctx.fillStyle='#000';ctx.fillRect(0,0,c.width,c.height);
+    const g=ctx.createRadialGradient(c.width/2,c.height/2,0,c.width/2,c.height/2,c.width*.6);
+    g.addColorStop(0,'#0a1628');g.addColorStop(1,'#000');
+    ctx.fillStyle=g;ctx.fillRect(0,0,c.width,c.height);
   }
+}
+function stopWP(){if(wpRAF){cancelAnimationFrame(wpRAF);wpRAF=null}}
 
-  function stopWallpaper() { if (wallpaperRAF) { cancelAnimationFrame(wallpaperRAF); wallpaperRAF = null; } }
+// ===== DESKTOP ICONS =====
+function initIcons(){
+  const el=$('#desk-icons');el.innerHTML='';
+  const desk=['search','terminal','files','browser','agents','notepad'];
+  desk.forEach(id=>{
+    const app=APPS.find(a=>a.id===id);if(!app)return;
+    const d=h('div',{className:'d-icon'});
+    d.innerHTML=`<div class="d-icon-img">${app.icon}</div><div class="d-icon-name">${app.name}</div>`;
+    d.ondblclick=()=>openApp(id);
+    d.onclick=()=>{$$('.d-icon').forEach(x=>x.classList.remove('sel'));d.classList.add('sel')};
+    if(S.isMob)d.onclick=()=>openApp(id);
+    el.appendChild(d);
+  });
+}
 
-  /* ========== DESKTOP INIT ========== */
-  function initDesktop() {
-    if (State.settings.theme === 'light') document.body.classList.add('light-os');
-    initWallpaper();
-    createDesktopIcons();
-    createPinnedIcons();
-    initTaskbar();
-    initStartMenu();
-    initContextMenu();
-    initClock();
-    notify('SintexOS v1.0 — BitNet 1.58-bit Engine Online');
+// ===== TASKBAR =====
+function initTaskbar(){
+  // Start button
+  $('#tb-start').onclick=()=>toggleStart();
+  // Search button
+  $('#tb-search-btn').onclick=()=>toggleSearch();
+  // Copilot button
+  $('#tb-copilot').onclick=()=>toggleCopilot();
+  // Pinned apps
+  const tb=$('#tb-apps');tb.innerHTML='';
+  APPS.filter(a=>a.pin).forEach(app=>{
+    const btn=h('button',{className:'tb-app-btn',title:app.name});
+    btn.innerHTML=app.icon;btn.dataset.app=app.id;
+    btn.onclick=()=>openApp(app.id);
+    tb.appendChild(btn);
+  });
+}
 
-    // Pause wallpaper when tab hidden
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) stopWallpaper();
-      else if (State.settings.wallpaper === 'rain') initWallpaper();
+function updateTB(){
+  // Update taskbar app buttons state
+  $$('.tb-app-btn').forEach(btn=>{
+    const id=btn.dataset.app;
+    const wins=[...S.wins.entries()].filter(([,w])=>w.appId===id);
+    btn.classList.toggle('running',wins.length>0);
+    btn.classList.toggle('active',wins.some(([k])=>k===S.focused));
+  });
+}
+
+// ===== CLOCK =====
+function initClock(){
+  const el=$('#tb-clock');
+  const up=()=>{
+    const now=new Date();
+    el.innerHTML=now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+
+      '<br>'+now.toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'});
+  };
+  up();setInterval(up,30000);
+}
+
+// ===== START MENU =====
+function initStart(){
+  const grid=$('#start-apps');
+  APPS.forEach(app=>{
+    const el=h('div',{className:'s-app'});
+    el.innerHTML=`<div class="s-app-icon">${app.icon}</div><div class="s-app-name">${app.name}</div>`;
+    el.onclick=()=>{openApp(app.id);toggleStart(false)};
+    grid.appendChild(el);
+  });
+  // Recent
+  const rec=$('#start-recent');
+  const recents=[
+    {name:'Welcome to SintexOS',time:'Just now',icon:ICO.note},
+    {name:'BitNet Research',time:'Today',icon:ICO.file},
+    {name:'Terminal Session',time:'Yesterday',icon:ICO.terminal}
+  ];
+  recents.forEach(r=>{
+    const el=h('div',{className:'s-recent'});
+    el.innerHTML=`<div class="s-recent-icon">${r.icon}</div><div class="s-recent-info"><div class="s-recent-name">${r.name}</div><div class="s-recent-time">${r.time}</div></div>`;
+    rec.appendChild(el);
+  });
+  // Search filter
+  $('#start-search').oninput=e=>{
+    const q=e.target.value.toLowerCase();
+    $$('.s-app').forEach((el,i)=>{
+      el.style.display=APPS[i].name.toLowerCase().includes(q)?'':'none';
     });
-  }
+  };
+  // Power
+  $('#start-power').onclick=()=>{if(confirm('Exit SintexOS?'))location.href='/'};
+  // Close on outside
+  document.addEventListener('click',e=>{
+    if(S.startOpen&&!$('#start').contains(e.target)&&!$('#tb-start').contains(e.target))toggleStart(false);
+    if(S.searchOpen&&!$('#search-flyout').contains(e.target)&&!$('#tb-search-btn').contains(e.target))toggleSearch(false);
+  });
+}
+function toggleStart(force){
+  S.startOpen=typeof force==='boolean'?force:!S.startOpen;
+  if(S.startOpen)toggleSearch(false);
+  $('#start').classList.toggle('hidden',!S.startOpen);
+  $('#tb-start').classList.toggle('active',S.startOpen);
+  if(S.startOpen){$('#start-search').value='';$('#start-search').focus()}
+}
 
-  /* ========== DESKTOP ICONS ========== */
-  function createDesktopIcons() {
-    const container = $('#os-icons');
-    container.innerHTML = '';
-    const desktopApps = ['sintex-ai', 'terminal', 'files', 'browser', 'notepad', 'monitor', 'settings', 'openclaw', 'chatgpt'];
-    desktopApps.forEach(id => {
-      const app = APPS.find(a => a.id === id);
-      if (!app) return;
-      const el = document.createElement('div');
-      el.className = 'desk-icon';
-      el.innerHTML = `<div class="desk-icon-img">${app.icon}</div><div class="desk-icon-name">${app.name}</div>`;
-      el.addEventListener('dblclick', () => openApp(id));
-      el.addEventListener('click', () => {
-        $$('.desk-icon').forEach(d => d.classList.remove('selected'));
-        el.classList.add('selected');
-      });
-      // Mobile: single tap opens
-      if (State.isMobile) el.addEventListener('click', () => openApp(id));
-      container.appendChild(el);
+// ===== SEARCH FLYOUT =====
+function initSearch(){
+  const list=$('#sf-apps-list');
+  APPS.forEach(app=>{
+    const el=h('div',{className:'sf-item'});
+    el.innerHTML=`${app.icon}<div><div class="sf-item-name">${app.name}</div></div>`;
+    el.onclick=()=>{openApp(app.id);toggleSearch(false)};
+    list.appendChild(el);
+  });
+  const quick=$('#sf-quick');
+  ['What is BitNet?','SintexOS features','OpenClaw agents','Bitcoin energy'].forEach(q=>{
+    const el=h('div',{className:'sf-item'});
+    el.innerHTML=`${ICO.search}<div class="sf-item-name">${q}</div>`;
+    el.onclick=()=>{openApp('search');toggleSearch(false)};
+    quick.appendChild(el);
+  });
+  $('#sf-input').oninput=e=>{
+    const q=e.target.value.toLowerCase();
+    $$('#sf-apps-list .sf-item').forEach((el,i)=>{
+      el.style.display=APPS[i].name.toLowerCase().includes(q)?'':'none';
     });
-  }
+  };
+  $('#sf-input').onkeydown=e=>{
+    if(e.key==='Escape')toggleSearch(false);
+  };
+}
+function toggleSearch(force){
+  S.searchOpen=typeof force==='boolean'?force:!S.searchOpen;
+  if(S.searchOpen)toggleStart(false);
+  $('#search-flyout').classList.toggle('hidden',!S.searchOpen);
+  if(S.searchOpen){$('#sf-input').value='';$('#sf-input').focus()}
+}
 
-  /* ========== PINNED ICONS ========== */
-  function createPinnedIcons() {
-    const container = $('#os-pinned');
-    container.innerHTML = '';
-    APPS.filter(a => a.pin).forEach(app => {
-      const el = document.createElement('div');
-      el.className = 'pinned-icon';
-      el.title = app.name;
-      el.textContent = app.icon;
-      el.dataset.app = app.id;
-      el.addEventListener('click', () => openApp(app.id));
-      container.appendChild(el);
-    });
-  }
+// ===== CONTEXT MENU =====
+function initCtx(){
+  const ctx=$('#ctx');
+  $('#desktop').addEventListener('contextmenu',e=>{
+    e.preventDefault();ctx.classList.remove('hidden');
+    ctx.style.left=Math.min(e.clientX,innerWidth-240)+'px';
+    ctx.style.top=Math.min(e.clientY,innerHeight-200)+'px';
+  });
+  document.addEventListener('click',()=>ctx.classList.add('hidden'));
+  $$('.ctx-item').forEach(it=>it.onclick=()=>{
+    const a=it.dataset.a;
+    if(a==='terminal')openApp('terminal');
+    if(a==='notepad')openApp('notepad');
+    if(a==='display'||a==='personalize')openApp('settings');
+    if(a==='refresh'){stopWP();initWallpaper();toast('Desktop refreshed')}
+    ctx.classList.add('hidden');
+  });
+}
 
-  /* ========== TASKBAR ========== */
-  function initTaskbar() {
-    $('#os-start-btn').addEventListener('click', toggleStart);
-  }
+// ===== COPILOT SIDEBAR =====
+function initCopilot(){
+  $('#copilot-close').onclick=()=>toggleCopilot(false);
+  // Welcome message
+  const body=$('#copilot-body');
+  const welcome=h('div',{className:'co-msg ai'});
+  welcome.innerHTML=`<strong>Welcome to Copilot</strong><br><br>I'm your AI assistant powered by the BitNet 1.58-bit ternary engine. I can help you with:<br><br>
+• Search and research any topic<br>• Explain code and technology<br>• Manage your OpenClaw agents<br>• Navigate SintexOS<br><br>
+<em style="color:var(--text3)">BitNet → Groq → Together → Local Knowledge</em>`;
+  body.appendChild(welcome);
 
-  function updateTaskbar() {
-    const container = $('#os-taskbar-windows');
-    container.innerHTML = '';
-    State.windows.forEach((win, id) => {
-      const btn = document.createElement('button');
-      btn.className = 'taskbar-win-btn' + (id === State.focusedWin ? ' active' : '');
-      btn.innerHTML = `<span class="tw-icon">${win.icon}</span><span class="tw-title">${win.title}</span>`;
-      btn.addEventListener('click', () => {
-        const el = win.el;
-        if (el.classList.contains('minimized')) {
-          el.classList.remove('minimized');
-          focusWindow(id);
-        } else if (id === State.focusedWin) {
-          el.classList.add('minimized');
-          State.focusedWin = null;
-        } else {
-          focusWindow(id);
-        }
-        updateTaskbar();
-      });
-      container.appendChild(btn);
-    });
-    // Update pinned icons state
-    $$('.pinned-icon').forEach(pin => {
-      const appId = pin.dataset.app;
-      const hasWindow = [...State.windows.entries()].some(([, w]) => w.appId === appId);
-      const isFocused = [...State.windows.entries()].some(([id, w]) => w.appId === appId && id === State.focusedWin);
-      pin.classList.toggle('running', hasWindow);
-      pin.classList.toggle('active', isFocused);
-    });
-  }
+  // Send message
+  const send=async()=>{
+    const input=$('#copilot-ask');
+    const text=input.value.trim();if(!text)return;input.value='';
+    // User msg
+    const um=h('div',{className:'co-msg user'});um.textContent=text;body.appendChild(um);
+    // Typing
+    const typing=h('div',{className:'co-typing'});
+    typing.innerHTML='<span></span><span></span><span></span>';body.appendChild(typing);
+    body.scrollTop=body.scrollHeight;
+    // Query
+    try{
+      const result=typeof BitNetClient!=='undefined'?await BitNetClient.search(text):{answer:'BitNet engine loading...'};
+      typing.remove();
+      const am=h('div',{className:'co-msg ai'});
+      let html=(result.answer||'No response').replace(/\n/g,'<br>');
+      if(result.sources&&result.sources.length){
+        html+='<div class="src">';
+        result.sources.slice(0,3).forEach(s=>{
+          html+=`<a href="${s.url||'#'}" target="_blank">${s.title||'Source'}</a>`;
+        });
+        html+='</div>';
+      }
+      am.innerHTML=html;body.appendChild(am);
+    }catch{
+      typing.remove();
+      const em=h('div',{className:'co-msg ai'});em.innerHTML='<span style="color:var(--red)">Connection error. Using local knowledge base.</span>';
+      body.appendChild(em);
+    }
+    body.scrollTop=body.scrollHeight;
+  };
+  $('#copilot-send').onclick=send;
+  $('#copilot-ask').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}};
+  // Auto-resize textarea
+  $('#copilot-ask').oninput=function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'};
+}
+function toggleCopilot(force){
+  const co=$('#copilot');
+  const isOpen=!co.classList.contains('closed');
+  const next=typeof force==='boolean'?force:!isOpen;
+  co.classList.toggle('closed',!next);
+  if(next)$('#copilot-ask').focus();
+}
 
-  /* ========== START MENU ========== */
-  function initStartMenu() {
-    const grid = $('#start-grid');
-    APPS.forEach(app => {
-      const el = document.createElement('div');
-      el.className = 'start-app';
-      el.innerHTML = `<div class="start-app-icon">${app.icon}</div><div class="start-app-name">${app.name}</div><div class="start-app-desc">${app.desc}</div>`;
-      el.addEventListener('click', () => { openApp(app.id); toggleStart(false); });
+// ===== TOAST =====
+function toast(msg,dur){
+  const el=$('#toast');el.textContent=msg;el.classList.remove('hidden');
+  clearTimeout(el._t);el._t=setTimeout(()=>el.classList.add('hidden'),dur||3500);
+}
+
+// ===== WINDOW MANAGER =====
+let wid=0;
+function openApp(appId){
+  // Focus existing
+  for(const[id,w]of S.wins){
+    if(w.appId===appId){w.el.classList.remove('min');focus(id);updateTB();return}
+  }
+  const app=APPS.find(a=>a.id===appId);if(!app)return;
+  const id='w'+(++wid);
+  const el=h('div',{className:'win',id});
+  const mob=innerWidth<=768;
+  if(mob){
+    el.style.cssText='top:0;left:0;width:100vw;height:calc(100vh - var(--tb-h))';
+  }else{
+    const off=(S.wins.size%5)*24;
+    const w=Math.min(app.w,innerWidth-60);
+    const ht=Math.min(app.h,innerHeight-90);
+    const x=Math.max(30,(innerWidth-w)/2+off);
+    const y=Math.max(10,(innerHeight-ht-48)/2+off);
+    el.style.cssText=`width:${w}px;height:${ht}px;transform:translate(${x}px,${y}px)`;
+  }
+  // Title bar
+  el.innerHTML=`
+    <div class="win-title">
+      <div class="win-title-icon">${app.icon}</div>
+      <div class="win-title-text">${app.name}</div>
+      <div class="win-ctrls">
+        <button class="win-ctrl-btn min-btn" title="Minimize"><svg width="12" height="12" viewBox="0 0 12 12"><line x1="2" y1="6" x2="10" y2="6" stroke="currentColor" stroke-width="1.5"/></svg></button>
+        <button class="win-ctrl-btn max-btn" title="Maximize"><svg width="12" height="12" viewBox="0 0 12 12"><rect x="2" y="2" width="8" height="8" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/></svg></button>
+        <button class="win-ctrl-btn close" title="Close"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+      </div>
+    </div>
+    <div class="win-body"></div>
+    <div class="win-resize"></div>`;
+  const body=el.querySelector('.win-body');
+  const content=renderApp(appId);
+  if(content)body.appendChild(content);
+  el.querySelector('.min-btn').onclick=e=>{e.stopPropagation();el.classList.add('min');updateTB()};
+  el.querySelector('.max-btn').onclick=e=>{e.stopPropagation();el.classList.toggle('max')};
+  el.querySelector('.close').onclick=e=>{e.stopPropagation();closeWin(id)};
+  el.querySelector('.win-title').ondblclick=()=>el.classList.toggle('max');
+  el.onmousedown=()=>focus(id);el.ontouchstart=()=>focus(id);
+  if(!mob){initDrag(el);initResize(el)}
+  $('#win-layer').appendChild(el);
+  S.wins.set(id,{el,appId,icon:app.icon,name:app.name,cleanup:content?._cleanup});
+  focus(id);updateTB();
+}
+function closeWin(id){
+  const w=S.wins.get(id);if(!w)return;
+  if(w.cleanup)w.cleanup();w.el.remove();S.wins.delete(id);
+  if(S.focused===id)S.focused=null;updateTB();
+}
+function focus(id){
+  S.wins.forEach((w,k)=>w.el.classList.toggle('focused',k===id));
+  const w=S.wins.get(id);if(w){w.el.style.zIndex=++S.zi;S.focused=id}
+  updateTB();
+}
+
+// ===== DRAG =====
+function initDrag(el){
+  const bar=el.querySelector('.win-title');
+  let drag=false,sx,sy,ox,oy;
+  const getT=()=>{
+    const m=getComputedStyle(el).transform;
+    if(m==='none')return{x:0,y:0};
+    const v=m.match(/matrix.*\((.+)\)/);
+    if(v){const p=v[1].split(',');return{x:+p[4],y:+p[5]}}return{x:0,y:0};
+  };
+  bar.onpointerdown=e=>{
+    if(e.target.closest('.win-ctrls')||el.classList.contains('max'))return;
+    drag=true;const p=getT();ox=p.x;oy=p.y;sx=e.clientX;sy=e.clientY;
+    el.style.willChange='transform';$$('iframe').forEach(f=>f.style.pointerEvents='none');
+    bar.setPointerCapture(e.pointerId);
+  };
+  bar.onpointermove=e=>{if(!drag)return;
+    el.style.transform=`translate(${ox+e.clientX-sx}px,${oy+e.clientY-sy}px)`};
+  const stop=()=>{drag=false;el.style.willChange='';$$('iframe').forEach(f=>f.style.pointerEvents='')};
+  bar.onpointerup=stop;bar.onpointercancel=stop;
+}
+
+// ===== RESIZE =====
+function initResize(el){
+  const handle=el.querySelector('.win-resize');
+  let rs=false,sx,sy,sw,sh;
+  handle.onpointerdown=e=>{
+    if(el.classList.contains('max'))return;
+    rs=true;sx=e.clientX;sy=e.clientY;sw=el.offsetWidth;sh=el.offsetHeight;
+    $$('iframe').forEach(f=>f.style.pointerEvents='none');
+    handle.setPointerCapture(e.pointerId);e.stopPropagation();
+  };
+  handle.onpointermove=e=>{if(!rs)return;
+    el.style.width=Math.max(360,sw+e.clientX-sx)+'px';
+    el.style.height=Math.max(240,sh+e.clientY-sy)+'px'};
+  const stop=()=>{rs=false;$$('iframe').forEach(f=>f.style.pointerEvents='')};
+  handle.onpointerup=stop;handle.onpointercancel=stop;
+}
+
+// ===== APP RENDERERS =====
+function renderApp(id){
+  switch(id){
+    case 'search':return renderSearch();
+    case 'terminal':return renderTerm();
+    case 'files':return renderExplorer();
+    case 'browser':return renderBrowser();
+    case 'notepad':return renderNotepad();
+    case 'monitor':return renderMonitor();
+    case 'settings':return renderSettings();
+    case 'agents':return renderAgents();
+  }
+}
+
+// --- SINTEX AI SEARCH ---
+function renderSearch(){
+  const f=h('iframe');f.src='/search.html';f.className='br-frame';
+  f.style.cssText='width:100%;height:100%;border:none;border-radius:0 0 8px 8px';
+  return f;
+}
+
+// --- TERMINAL ---
+function renderTerm(){
+  const w=h('div',{className:'app-term'});
+  const tabs=h('div',{className:'term-tabs'});
+  tabs.innerHTML='<div class="term-tab active">Terminal</div>';
+  const out=h('div',{className:'term-out'});
+  out.innerHTML=`<span class="t-info">SintexOS Terminal v1.0</span>\n<span class="t-dim">BitNet 1.58-bit Ternary Engine — {-1, 0, +1}</span>\n<span class="t-dim">Type </span><span class="t-cmd">help</span><span class="t-dim"> for commands</span>\n\n`;
+  const hist=[];let hi=-1,cwd='/home/sintex';
+  const FS={'/':['boot','etc','home','usr','var','sys'],'/home':['sintex'],
+    '/home/sintex':['Desktop','Documents','Downloads','.bitnet','.openclaw'],
+    '/home/sintex/.bitnet':['models','config.json'],'/home/sintex/.bitnet/models':['bitnet-b1.58-2B-4T.gguf','bitnet-b1.58-700M.gguf'],
+    '/home/sintex/.openclaw':['agents','workspace','node.json'],'/home/sintex/.openclaw/agents':['jarvis.json'],
+    '/home/sintex/Documents':['BitNet-Research.pdf','Sovereign-Stack.md','DeFi-Playbook.md'],
+    '/home/sintex/Desktop':['README.md'],'/home/sintex/Downloads':[],
+    '/boot':['vmlinuz-bitnet','initrd.img'],'/etc':['hostname','fstab','sintexos-release'],
+    '/usr':['bin','lib'],'/usr/bin':['bitnet','openclaw','node','python3']};
+  const resolve=p=>{
+    if(!p||p==='~')return'/home/sintex';if(p==='/')return'/';
+    if(p.startsWith('/'))return p.replace(/\/+$/,'')||'/';
+    if(p==='..'){const pts=cwd.split('/').filter(Boolean);pts.pop();return'/'+pts.join('/')||'/'}
+    return(cwd==='/'?'/':cwd+'/')+p;
+  };
+  const CMDS={
+    help:()=>`<span class="t-info">Commands:</span>  ls  cd  pwd  whoami  date  clear  neofetch  bitnet  openclaw  echo  history  uname  free  top  cat  exit`,
+    ls:a=>{const p=a[0]?resolve(a[0]):cwd;const items=FS[p];
+      if(!items)return`<span class="t-err">ls: '${a[0]||p}': No such directory</span>`;
+      return items.map(f=>{const fp=p==='/'?'/'+f:p+'/'+f;return FS[fp]?`<span class="t-info">${f}/</span>`:f}).join('  ')},
+    cd:a=>{const p=resolve(a[0]);if(FS[p]!==undefined){cwd=p;return null}return`<span class="t-err">cd: ${a[0]}: not found</span>`},
+    pwd:()=>cwd,whoami:()=>'sintex',date:()=>new Date().toString(),
+    clear:()=>{out.innerHTML='';return null},
+    neofetch:()=>`<span class="t-info">
+  ███████╗ ██████╗ ███████╗
+  ██╔════╝██╔═══██╗██╔════╝
+  ███████╗██║   ██║███████╗
+  ╚════██║██║   ██║╚════██║
+  ███████║╚██████╔╝███████║
+  ╚══════╝ ╚═════╝ ╚══════╝</span>
+  <span class="t-dim">OS</span>      SintexOS 1.0 x86_64
+  <span class="t-dim">Kernel</span>  BitNet 1.58-bit (ternary)
+  <span class="t-dim">Shell</span>   sintex-sh 1.0
+  <span class="t-dim">Engine</span>  {-1, 0, +1} Matrix
+  <span class="t-dim">CPU</span>     ${navigator.hardwareConcurrency||'?'}x cores
+  <span class="t-dim">Memory</span>  ${navigator.deviceMemory||'?'} GB
+  <span class="t-dim">Display</span> ${screen.width}x${screen.height}
+  <span class="t-dim">Agent</span>   OpenClaw JARVIS (opus-4-6)`,
+    bitnet:a=>{
+      if(!a[0]||a[0]==='--status')return`<span class="t-info">BitNet Engine</span>  <span class="t-prompt">ONLINE</span>
+  Model     bitnet-b1.58-2B-4T
+  Weights   {-1, 0, +1} ternary
+  Speedup   6.17x vs FP16
+  Energy    -82% reduction
+  Backend   Groq → Together → Cache`;
+      return'Usage: bitnet [--status|--version]'},
+    openclaw:()=>`<span class="t-info">OpenClaw Agent Hub</span>
+  Agent     JARVIS <span class="t-dim">(claude-opus-4-6)</span>
+  Gateway   ws://127.0.0.1:18789
+  Status    <span class="t-warn">STANDBY</span>
+  Browser   CDP :18800
+  Backup    */30 auto-backup <span class="t-prompt">ACTIVE</span>`,
+    echo:a=>esc(a.join(' ')),history:()=>hist.map((c,i)=>`  ${i+1}  ${c}`).join('\n'),
+    uname:a=>a[0]==='-a'?'SintexOS 1.0 bitnet-1.58 x86_64':'SintexOS',
+    free:()=>`              total    used     free
+Mem:          ${navigator.deviceMemory||8}G       2.1G     ${((navigator.deviceMemory||8)-2.1).toFixed(1)}G
+BitNet:       ∞        1.4G     ∞`,
+    top:()=>`  PID  CPU%  MEM%  COMMAND
+    1   0.1   0.5  bitnet-kernel
+   42   2.3   1.2  sintex-compositor
+  128   1.1   0.8  sintex-search
+  256   0.4   0.3  openclaw-agent`,
+    cat:a=>{
+      if(!a[0])return'<span class="t-err">cat: missing file</span>';
+      if(a[0].includes('release'))return'SintexOS 1.0.0 (BitNet Edition)';
+      if(a[0].includes('hostname'))return'sintex-os';
+      return`<span class="t-err">cat: ${esc(a[0])}: No such file</span>`},
+    exit:()=>null
+  };
+  function exec(cmdStr){
+    const[cmd,...args]=cmdStr.trim().split(/\s+/);
+    out.innerHTML+=`<span class="t-prompt"><span class="t-user">sintex</span>@os</span>:<span class="t-path">${cwd}</span>$ <span class="t-cmd">${esc(cmdStr)}</span>\n`;
+    if(cmd==='exit'){for(const[id,w]of S.wins)if(w.appId==='terminal'){closeWin(id);return}return}
+    const fn=CMDS[cmd];
+    const r=fn?fn(args):`<span class="t-err">${esc(cmd)}: command not found</span>`;
+    if(r!==null&&r!==undefined)out.innerHTML+=r+'\n';
+    out.scrollTop=out.scrollHeight;
+  }
+  const inRow=h('div',{className:'term-in'});
+  const prompt=h('span');
+  prompt.innerHTML=`<span class="t-prompt"><span class="t-user">sintex</span>@os</span>:<span class="t-path">${cwd}</span>$`;
+  const input=h('input');input.type='text';input.autocomplete='off';input.spellcheck=false;
+  input.onkeydown=e=>{
+    if(e.key==='Enter'){const c=input.value.trim();if(!c)return;hist.unshift(c);hi=-1;input.value='';exec(c);
+      prompt.innerHTML=`<span class="t-prompt"><span class="t-user">sintex</span>@os</span>:<span class="t-path">${cwd}</span>$`}
+    else if(e.key==='ArrowUp'){e.preventDefault();hi=Math.min(hi+1,hist.length-1);if(hi>=0)input.value=hist[hi]}
+    else if(e.key==='ArrowDown'){e.preventDefault();hi=Math.max(hi-1,-1);input.value=hi>=0?hist[hi]:''}
+    else if(e.key==='Tab'){e.preventDefault();const p=input.value;
+      const m=Object.keys(CMDS).filter(c=>c.startsWith(p));if(m.length===1)input.value=m[0]+' '}
+    else if(e.key==='l'&&e.ctrlKey){e.preventDefault();out.innerHTML=''}
+  };
+  inRow.append(prompt,input);
+  w.append(tabs,out,inRow);
+  w.onclick=()=>input.focus();
+  setTimeout(()=>input.focus(),100);
+  return w;
+}
+
+// --- EXPLORER ---
+function renderExplorer(){
+  const w=h('div',{className:'app-explorer'});
+  let cwd='/home/sintex';
+  const FS={'/':{'boot':'d','etc':'d','home':'d','usr':'d'},'/home':{'sintex':'d'},
+    '/home/sintex':{'Desktop':'d','Documents':'d','Downloads':'d','.bitnet':'d','.openclaw':'d'},
+    '/home/sintex/Desktop':{'README.md':'f'},
+    '/home/sintex/Documents':{'BitNet-Research.pdf':'f','Sovereign-Stack.md':'f','DeFi-Playbook.md':'f','zero-to-1m-book.md':'f'},
+    '/home/sintex/Downloads':{},
+    '/home/sintex/.bitnet':{'models':'d','config.json':'f'},'/home/sintex/.bitnet/models':{'bitnet-b1.58-2B-4T.gguf':'f'},
+    '/home/sintex/.openclaw':{'agents':'d','workspace':'d','node.json':'f'},
+    '/home/sintex/.openclaw/agents':{'jarvis.json':'f'},
+    '/home/sintex/.openclaw/workspace':{'MEMORY.md':'f','HEARTBEAT.md':'f'}};
+  const toolbar=h('div',{className:'exp-toolbar'});
+  const backBtn=h('button',{className:'exp-btn',textContent:'←'});
+  const homeBtn=h('button',{className:'exp-btn',textContent:'⌂'});
+  const pathEl=h('div',{className:'exp-path'});
+  toolbar.append(backBtn,homeBtn,pathEl);
+  const body=h('div',{className:'exp-body'});
+  // Sidebar
+  const sidebar=h('div',{className:'exp-sidebar'});
+  const navItems=[{name:'Home',path:'/home/sintex'},{name:'Desktop',path:'/home/sintex/Desktop'},
+    {name:'Documents',path:'/home/sintex/Documents'},{name:'Downloads',path:'/home/sintex/Downloads'},
+    {name:'.bitnet',path:'/home/sintex/.bitnet'},{name:'.openclaw',path:'/home/sintex/.openclaw'}];
+  navItems.forEach(n=>{
+    const el=h('div',{className:'exp-nav',textContent:n.name});
+    el.onclick=()=>{cwd=n.path;render()};
+    sidebar.appendChild(el);
+  });
+  const grid=h('div',{className:'exp-grid'});
+  const status=h('div',{className:'exp-status'});
+  body.append(sidebar,grid);w.append(toolbar,body,status);
+  backBtn.onclick=()=>{if(cwd!=='/'){cwd=cwd.split('/').slice(0,-1).join('/')||'/';render()}};
+  homeBtn.onclick=()=>{cwd='/home/sintex';render()};
+  function render(){
+    pathEl.textContent=cwd;grid.innerHTML='';
+    const dir=FS[cwd]||{};
+    if(cwd!=='/'){
+      const up=h('div',{className:'exp-item'});up.innerHTML=`${ICO.folderFill}<div class="exp-item-name">..</div>`;
+      up.ondblclick=()=>{cwd=cwd.split('/').slice(0,-1).join('/')||'/';render()};grid.appendChild(up);
+    }
+    const entries=Object.entries(dir).sort(([,a],[,b])=>a==='d'&&b!=='d'?-1:1);
+    entries.forEach(([name,type])=>{
+      const el=h('div',{className:'exp-item'});
+      el.innerHTML=`${type==='d'?ICO.folderFill:ICO.fileFill}<div class="exp-item-name">${name}</div>`;
+      el.onclick=()=>{$$('.exp-item',grid).forEach(x=>x.classList.remove('sel'));el.classList.add('sel')};
+      if(type==='d')el.ondblclick=()=>{cwd=cwd==='/'?'/'+name:cwd+'/'+name;render()};
       grid.appendChild(el);
     });
+    status.textContent=`${entries.length} items — ${cwd}`;
+    $$('.exp-nav',sidebar).forEach((n,i)=>n.classList.toggle('active',navItems[i].path===cwd));
+  }
+  render();return w;
+}
 
-    // Search filter
-    $('#start-search').addEventListener('input', (e) => {
-      const q = e.target.value.toLowerCase();
-      $$('.start-app').forEach((el, i) => {
-        const app = APPS[i];
-        el.style.display = (app.name.toLowerCase().includes(q) || app.desc.toLowerCase().includes(q)) ? '' : 'none';
-      });
-    });
+// --- BROWSER ---
+function renderBrowser(){
+  const w=h('div',{className:'app-browser'});
+  const bar=h('div',{className:'br-bar'});
+  const back=h('button',{className:'br-btn',textContent:'←'});
+  const fwd=h('button',{className:'br-btn',textContent:'→'});
+  const ref=h('button',{className:'br-btn',textContent:'↻'});
+  const url=h('input',{className:'br-url',value:'https://sintex.ai'});
+  const frame=h('iframe',{className:'br-frame',src:'https://sintex.ai'});
+  frame.sandbox='allow-scripts allow-same-origin allow-forms allow-popups';
+  url.onkeydown=e=>{if(e.key==='Enter'){let u=url.value.trim();
+    if(!u.startsWith('http')&&!u.startsWith('/'))u='https://'+u;frame.src=u}};
+  back.onclick=()=>{try{frame.contentWindow.history.back()}catch{}};
+  fwd.onclick=()=>{try{frame.contentWindow.history.forward()}catch{}};
+  ref.onclick=()=>{frame.src=frame.src};
+  bar.append(back,fwd,ref,url);w.append(bar,frame);return w;
+}
 
-    // Power buttons
-    $$('.start-power-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const action = btn.dataset.action;
-        if (action === 'shutdown') window.location.href = '/';
-        if (action === 'restart') window.location.reload();
-      });
-    });
+// --- NOTEPAD ---
+function renderNotepad(){
+  const w=h('div',{className:'app-notepad'});
+  const tb=h('div',{className:'np-toolbar'});
+  const newBtn=h('button',{textContent:'New'});
+  const openBtn=h('button',{textContent:'Open'});
+  const st=h('span',{className:'np-status',textContent:'Ready'});
+  tb.append(newBtn,openBtn,st);
+  const area=h('textarea',{className:'np-area',spellcheck:true,
+    placeholder:'Start typing here...\n\nYour notes auto-save to this browser.'});
+  area.value=load('notepad')||'';
+  let timer;area.oninput=()=>{st.textContent='Editing...';clearTimeout(timer);
+    timer=setTimeout(()=>{save('notepad',area.value);st.textContent=`Saved · ${area.value.length} chars`},500)};
+  newBtn.onclick=()=>{if(area.value&&!confirm('Clear?'))return;area.value='';save('notepad','');st.textContent='New'};
+  w.append(tb,area);setTimeout(()=>area.focus(),100);return w;
+}
 
-    // Close on outside click
-    document.addEventListener('click', (e) => {
-      if (State.startOpen && !$('#os-start').contains(e.target) && !$('#os-start-btn').contains(e.target)) {
-        toggleStart(false);
-      }
+// --- SYSTEM MONITOR ---
+function renderMonitor(){
+  const w=h('div',{className:'app-monitor'});
+  const header=h('div',{className:'mon-header',textContent:'Performance'});
+  const grid=h('div',{className:'mon-grid'});
+  const stats={cpu:12,mem:35,gpu:0,net:1.5};
+  const hist={cpu:[],mem:[],gpu:[],net:[]};
+  const cells=[
+    {k:'cpu',label:'CPU',color:'#60CDFF',unit:'%'},
+    {k:'mem',label:'Memory',color:'#B4A0FF',unit:'%'},
+    {k:'gpu',label:'BitNet Engine',color:'#6CCB5F',unit:'%'},
+    {k:'net',label:'Network',color:'#FCB900',unit:' MB/s'}
+  ];
+  const els={};
+  cells.forEach(c=>{
+    const cell=h('div',{className:'mon-cell'});
+    cell.innerHTML=`<div class="mon-cell-title">${c.label}</div>
+      <div class="mon-cell-val" style="color:${c.color}">0${c.unit}</div>
+      <div class="mon-bar"><div class="mon-bar-fill" style="background:${c.color};width:0%"></div></div>
+      <canvas class="mon-spark" width="200" height="48"></canvas>`;
+    grid.appendChild(cell);
+    els[c.k]={val:cell.querySelector('.mon-cell-val'),bar:cell.querySelector('.mon-bar-fill'),
+      canvas:cell.querySelector('.mon-spark'),color:c.color,unit:c.unit};
+  });
+  function spark(cvs,data,color){
+    const ctx=cvs.getContext('2d'),w=cvs.width,ht=cvs.height;
+    ctx.clearRect(0,0,w,ht);if(data.length<2)return;
+    // Fill
+    ctx.beginPath();data.forEach((v,i)=>{const x=i/(data.length-1)*w,y=ht-v/100*ht;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});
+    ctx.lineTo(w,ht);ctx.lineTo(0,ht);ctx.closePath();ctx.fillStyle=color+'10';ctx.fill();
+    // Line
+    ctx.beginPath();data.forEach((v,i)=>{const x=i/(data.length-1)*w,y=ht-v/100*ht;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});
+    ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.stroke();
+  }
+  function tick(){
+    stats.cpu=Math.max(2,Math.min(98,stats.cpu+(Math.random()-.5)*16));
+    stats.mem=Math.max(20,Math.min(85,stats.mem+(Math.random()-.5)*4));
+    stats.gpu=Math.max(0,Math.min(100,stats.gpu+(Math.random()-.5)*30));
+    stats.net=Math.max(0,stats.net+(Math.random()-.5)*5);
+    cells.forEach(c=>{
+      const e=els[c.k],v=Math.round(stats[c.k]*10)/10;
+      e.val.textContent=v+c.unit;e.bar.style.width=Math.min(stats[c.k],100)+'%';
+      hist[c.k].push(stats[c.k]);if(hist[c.k].length>60)hist[c.k].shift();
+      spark(e.canvas,hist[c.k],c.color);
     });
   }
+  tick();const iv=setInterval(tick,1200);
+  w.append(header,grid);w._cleanup=()=>clearInterval(iv);return w;
+}
 
-  function toggleStart(force) {
-    State.startOpen = typeof force === 'boolean' ? force : !State.startOpen;
-    $('#os-start').classList.toggle('hidden', !State.startOpen);
-    $('#os-start-btn').classList.toggle('active', State.startOpen);
-    if (State.startOpen) { $('#start-search').value = ''; $('#start-search').focus(); }
+// --- SETTINGS ---
+function renderSettings(){
+  const w=h('div',{className:'app-settings'});
+  const nav=h('div',{className:'set-nav'});
+  nav.innerHTML=`<div class="set-nav-title">Settings</div>`;
+  const sections=[
+    {id:'system',label:'System',icon:ICO.monitor},
+    {id:'personalize',label:'Personalization',icon:ICO.settings},
+    {id:'about',label:'About',icon:ICO.copilot}
+  ];
+  const body=h('div',{className:'set-body'});
+  const content={
+    system:`<div class="set-section"><div class="set-title">System</div>
+      <div class="set-card"><div class="set-row"><div><div class="set-label">Theme</div><div class="set-desc">Switch between dark and light mode</div></div>
+        <button class="set-toggle ${S.cfg.theme==='light'?'on':''}" id="s-theme"></button></div></div>
+      <div class="set-card"><div class="set-row"><div><div class="set-label">BitNet Engine</div><div class="set-desc">1.58-bit ternary neural engine</div></div>
+        <span style="color:var(--green);font-size:13px">ONLINE</span></div></div>
+      <div class="set-card"><div class="set-row"><div><div class="set-label">OpenClaw Agent</div><div class="set-desc">JARVIS — claude-opus-4-6</div></div>
+        <span style="color:var(--orange);font-size:13px">STANDBY</span></div></div></div>`,
+    personalize:`<div class="set-section"><div class="set-title">Personalization</div>
+      <div class="set-card"><div class="set-row"><div><div class="set-label">Wallpaper</div></div>
+        <div style="display:flex;gap:8px">${['mesh','solid'].map(wp=>
+          `<div style="width:48px;height:32px;border-radius:4px;cursor:pointer;border:2px solid ${S.cfg.wp===wp?'var(--accent)':'transparent'};
+            background:${wp==='mesh'?'linear-gradient(135deg,#0a1628,#1a0a2e)':'#111'}" data-wp="${wp}"></div>`
+        ).join('')}</div></div></div>
+      <div class="set-card"><div class="set-row"><div><div class="set-label">Accent Color</div></div>
+        <div style="display:flex;gap:6px">${['#60CDFF','#B4A0FF','#6CCB5F','#FF6B6B','#FCB900'].map(c=>
+          `<div style="width:24px;height:24px;border-radius:50%;background:${c};cursor:pointer;
+            border:2px solid ${S.cfg.accent===c?'#fff':'transparent'}" data-accent="${c}"></div>`
+        ).join('')}</div></div></div></div>`,
+    about:`<div class="set-section"><div class="set-title">About SintexOS</div>
+      <div class="set-card" style="line-height:2">
+        <div style="font-size:22px;font-weight:600;margin-bottom:8px"><span style="color:var(--accent)">Sintex</span>OS</div>
+        <span class="set-label">Version</span> <span style="color:var(--text)">1.0.0 (Build 158-ternary)</span><br>
+        <span class="set-label">Engine</span> <span style="color:var(--text)">BitNet 1.58-bit {-1, 0, +1}</span><br>
+        <span class="set-label">Agent</span> <span style="color:var(--text)">OpenClaw JARVIS (claude-opus-4-6)</span><br>
+        <span class="set-label">Platform</span> <span style="color:var(--text)">${navigator.platform}</span><br>
+        <span class="set-label">Display</span> <span style="color:var(--text)">${screen.width}×${screen.height}</span><br>
+        <span class="set-label">CPU Cores</span> <span style="color:var(--text)">${navigator.hardwareConcurrency||'N/A'}</span><br>
+        <span class="set-label">Memory</span> <span style="color:var(--text)">${navigator.deviceMemory||'N/A'} GB</span><br><br>
+        <span style="color:var(--text3);font-style:italic">"The sovereign AI operating system.<br>Windows 11 design. Perplexity intelligence. OpenClaw agents."</span>
+      </div></div>`
+  };
+  function show(id){
+    body.innerHTML=content[id]||'';
+    $$('.set-nav-item',nav).forEach(n=>n.classList.toggle('active',n.dataset.s===id));
+    // Bind events
+    const theme=$('#s-theme',w);
+    if(theme)theme.onclick=()=>{S.cfg.theme=S.cfg.theme==='dark'?'light':'dark';save('cfg',S.cfg);
+      document.body.classList.toggle('light-os',S.cfg.theme==='light');show('system')};
+    $$('[data-wp]',w).forEach(el=>el.onclick=()=>{S.cfg.wp=el.dataset.wp;save('cfg',S.cfg);stopWP();initWallpaper();show('personalize')});
+    $$('[data-accent]',w).forEach(el=>el.onclick=()=>{S.cfg.accent=el.dataset.accent;save('cfg',S.cfg);
+      document.documentElement.style.setProperty('--accent',el.dataset.accent);show('personalize')});
   }
-
-  /* ========== CONTEXT MENU ========== */
-  function initContextMenu() {
-    const ctx = $('#os-ctx');
-    $('#os-desktop').addEventListener('contextmenu', (e) => {
-      e.preventDefault();
-      ctx.classList.remove('hidden');
-      const x = Math.min(e.clientX, window.innerWidth - 220);
-      const y = Math.min(e.clientY, window.innerHeight - 200);
-      ctx.style.left = x + 'px';
-      ctx.style.top = y + 'px';
-    });
-    document.addEventListener('click', () => ctx.classList.add('hidden'));
-    $$('.os-ctx-item').forEach(item => {
-      item.addEventListener('click', () => {
-        const action = item.dataset.action;
-        if (action === 'new-note') openApp('notepad');
-        if (action === 'open-terminal') openApp('terminal');
-        if (action === 'settings') openApp('settings');
-        if (action === 'refresh') { stopWallpaper(); initWallpaper(); notify('Desktop refreshed'); }
-        if (action === 'about') openApp('settings');
-        ctx.classList.add('hidden');
-      });
-    });
-  }
-
-  /* ========== CLOCK ========== */
-  function initClock() {
-    const el = $('#os-clock');
-    const update = () => {
-      const now = new Date();
-      const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      const date = now.toLocaleDateString([], { month: 'short', day: 'numeric' });
-      el.innerHTML = `${time}<br>${date}`;
-    };
-    update();
-    setInterval(update, 30000);
-  }
-
-  /* ========== NOTIFICATIONS ========== */
-  function notify(msg, duration) {
-    const el = $('#os-notify');
-    el.textContent = msg;
-    el.classList.remove('hidden');
-    clearTimeout(el._timer);
-    el._timer = setTimeout(() => el.classList.add('hidden'), duration || 3000);
-  }
-
-  /* ========== WINDOW MANAGER ========== */
-  let winIdCounter = 0;
-
-  function openApp(appId) {
-    // If already open, focus it
-    for (const [id, w] of State.windows) {
-      if (w.appId === appId) {
-        w.el.classList.remove('minimized');
-        focusWindow(id);
-        updateTaskbar();
-        return;
-      }
-    }
-    const app = APPS.find(a => a.id === appId);
-    if (!app) return;
-
-    const winId = 'w' + (++winIdCounter);
-    const el = document.createElement('div');
-    el.className = 'os-win os-fadein';
-    el.id = winId;
-
-    // Position
-    const isMobile = window.innerWidth <= 480;
-    if (isMobile) {
-      el.style.cssText = `top:0;left:0;width:100vw;height:calc(100vh - var(--os-taskbar-h));`;
-    } else {
-      const offset = (State.windows.size % 6) * 28;
-      const w = Math.min(app.w, window.innerWidth - 40);
-      const h = Math.min(app.h, window.innerHeight - 80);
-      const x = Math.max(20, (window.innerWidth - w) / 2 + offset);
-      const y = Math.max(10, (window.innerHeight - h - 48) / 2 + offset);
-      el.style.cssText = `width:${w}px;height:${h}px;transform:translate(${x}px,${y}px);`;
-    }
-
-    // Title bar
-    el.innerHTML = `
-      <div class="os-win-title">
-        <span class="os-win-icon">${app.icon}</span>
-        <span class="os-win-name">${app.name}</span>
-        <div class="os-win-btns">
-          <button class="os-win-btn minimize" title="Minimize">─</button>
-          <button class="os-win-btn maximize" title="Maximize">□</button>
-          <button class="os-win-btn close" title="Close">✕</button>
-        </div>
-      </div>
-      <div class="os-win-body"></div>
-      <div class="os-win-resize"></div>
-    `;
-
-    const body = el.querySelector('.os-win-body');
-    const content = renderApp(appId, body);
-    if (content) body.appendChild(content);
-
-    // Window controls
-    el.querySelector('.minimize').addEventListener('click', (e) => {
-      e.stopPropagation();
-      el.classList.add('minimized');
-      updateTaskbar();
-    });
-    el.querySelector('.maximize').addEventListener('click', (e) => {
-      e.stopPropagation();
-      el.classList.toggle('maximized');
-    });
-    el.querySelector('.close').addEventListener('click', (e) => {
-      e.stopPropagation();
-      closeWindow(winId);
-    });
-
-    // Title bar double-click = maximize
-    el.querySelector('.os-win-title').addEventListener('dblclick', () => {
-      el.classList.toggle('maximized');
-    });
-
-    // Focus on click
-    el.addEventListener('mousedown', () => focusWindow(winId));
-    el.addEventListener('touchstart', () => focusWindow(winId), { passive: true });
-
-    // Drag
-    if (!isMobile) initDrag(el, winId);
-    // Resize
-    if (!isMobile) initResize(el);
-
-    $('#os-windows').appendChild(el);
-    State.windows.set(winId, { el, appId, icon: app.icon, title: app.name, cleanup: content?._cleanup });
-    focusWindow(winId);
-    updateTaskbar();
-  }
-
-  function closeWindow(winId) {
-    const win = State.windows.get(winId);
-    if (!win) return;
-    if (win.cleanup) win.cleanup();
-    win.el.remove();
-    State.windows.delete(winId);
-    if (State.focusedWin === winId) State.focusedWin = null;
-    updateTaskbar();
-  }
-
-  function focusWindow(winId) {
-    State.windows.forEach((w, id) => w.el.classList.toggle('focused', id === winId));
-    const win = State.windows.get(winId);
-    if (win) { win.el.style.zIndex = ++State.zIndex; State.focusedWin = winId; }
-    updateTaskbar();
-  }
-
-  /* ========== DRAG ========== */
-  function initDrag(el, winId) {
-    const titleBar = el.querySelector('.os-win-title');
-    let dragging = false, startX, startY, origX, origY;
-
-    const getTranslate = () => {
-      const s = getComputedStyle(el).transform;
-      if (s === 'none') return { x: el.offsetLeft, y: el.offsetTop };
-      const m = s.match(/matrix.*\((.+)\)/);
-      if (m) { const v = m[1].split(','); return { x: parseFloat(v[4]), y: parseFloat(v[5]) }; }
-      return { x: 0, y: 0 };
-    };
-
-    titleBar.addEventListener('pointerdown', (e) => {
-      if (e.target.closest('.os-win-btns') || el.classList.contains('maximized')) return;
-      dragging = true;
-      const pos = getTranslate();
-      origX = pos.x; origY = pos.y;
-      startX = e.clientX; startY = e.clientY;
-      el.style.willChange = 'transform';
-      // Disable pointer events on iframes during drag
-      $$('iframe').forEach(f => f.style.pointerEvents = 'none');
-      titleBar.setPointerCapture(e.pointerId);
-    });
-    titleBar.addEventListener('pointermove', (e) => {
-      if (!dragging) return;
-      const dx = e.clientX - startX, dy = e.clientY - startY;
-      el.style.transform = `translate(${origX + dx}px, ${origY + dy}px)`;
-    });
-    const stopDrag = () => {
-      dragging = false;
-      el.style.willChange = '';
-      $$('iframe').forEach(f => f.style.pointerEvents = '');
-    };
-    titleBar.addEventListener('pointerup', stopDrag);
-    titleBar.addEventListener('pointercancel', stopDrag);
-  }
-
-  /* ========== RESIZE ========== */
-  function initResize(el) {
-    const handle = el.querySelector('.os-win-resize');
-    let resizing = false, startX, startY, startW, startH;
-
-    handle.addEventListener('pointerdown', (e) => {
-      if (el.classList.contains('maximized')) return;
-      resizing = true;
-      startX = e.clientX; startY = e.clientY;
-      startW = el.offsetWidth; startH = el.offsetHeight;
-      $$('iframe').forEach(f => f.style.pointerEvents = 'none');
-      handle.setPointerCapture(e.pointerId);
-      e.stopPropagation();
-    });
-    handle.addEventListener('pointermove', (e) => {
-      if (!resizing) return;
-      el.style.width = Math.max(320, startW + e.clientX - startX) + 'px';
-      el.style.height = Math.max(200, startH + e.clientY - startY) + 'px';
-    });
-    const stopResize = () => {
-      resizing = false;
-      $$('iframe').forEach(f => f.style.pointerEvents = '');
-    };
-    handle.addEventListener('pointerup', stopResize);
-    handle.addEventListener('pointercancel', stopResize);
-  }
-
-  /* ========== APP RENDERERS ========== */
-  function renderApp(appId, container) {
-    switch (appId) {
-      case 'sintex-ai': return renderSintexAI();
-      case 'terminal': return renderTerminal();
-      case 'files': return renderFileManager();
-      case 'settings': return renderSettings();
-      case 'notepad': return renderNotepad();
-      case 'monitor': return renderMonitor();
-      case 'browser': return renderBrowser('https://sintex.ai/search.html');
-      case 'openclaw': return renderOpenClaw();
-      case 'chatgpt': return renderChatGPT();
-      default: return null;
-    }
-  }
-
-  /* --- SINTEX AI (iframe) --- */
-  function renderSintexAI() {
-    const iframe = document.createElement('iframe');
-    iframe.src = '/search.html';
-    iframe.className = 'browser-frame';
-    iframe.style.cssText = 'width:100%;height:100%;border:none;';
-    return iframe;
-  }
-
-  /* --- TERMINAL --- */
-  function renderTerminal() {
-    const wrap = document.createElement('div');
-    wrap.className = 'app-terminal';
-
-    const output = document.createElement('div');
-    output.className = 'term-output';
-
-    const welcome = `<span class="term-info">SintexOS Terminal v1.0.0</span>
-<span class="term-info">BitNet 1.58-bit Ternary Engine — {-1, 0, +1}</span>
-<span class="term-out">Type <span class="term-cmd">help</span> for available commands.</span>
-`;
-    output.innerHTML = welcome;
-
-    const history = [];
-    let histIdx = -1;
-    let cwd = '/home/sintex';
-
-    const FS = {
-      '/': ['boot', 'etc', 'home', 'usr', 'var', 'proc', 'sys', 'opt'],
-      '/home': ['sintex'],
-      '/home/sintex': ['Desktop', 'Documents', 'Downloads', '.bitnet', '.config', '.openclaw'],
-      '/home/sintex/.bitnet': ['models', 'config.json', 'README.md'],
-      '/home/sintex/.bitnet/models': ['bitnet-b1.58-2B-4T.gguf', 'bitnet-b1.58-700M.gguf'],
-      '/home/sintex/.openclaw': ['agents', 'workspace', 'node.json', 'gateway.pid'],
-      '/home/sintex/.openclaw/agents': ['jarvis', 'skynet', 'openclaw-main'],
-      '/home/sintex/Desktop': ['Sintex AI.lnk', 'Terminal.lnk', 'README.md'],
-      '/home/sintex/Documents': ['BitNet-Research.pdf', 'Sovereign-Stack-Guide.md', 'zero-to-1m-book.md'],
-      '/home/sintex/Downloads': [],
-      '/boot': ['vmlinuz-bitnet', 'initrd-ternary.img', 'grub'],
-      '/etc': ['sintexos-release', 'hostname', 'passwd', 'fstab'],
-      '/usr': ['bin', 'lib', 'share'],
-      '/usr/bin': ['bitnet', 'openclaw', 'sintex-search', 'node', 'python3'],
-    };
-
-    const CMDS = {
-      help: () => `<span class="term-info">Available commands:</span>
-  ls [path]       — List directory contents
-  cd <path>       — Change directory
-  pwd             — Print working directory
-  cat <file>      — Display file contents
-  whoami          — Current user
-  date            — Current date/time
-  clear           — Clear terminal
-  neofetch        — System information
-  bitnet          — BitNet engine status
-  openclaw        — OpenClaw agent status
-  echo <text>     — Print text
-  history         — Command history
-  uname -a        — Kernel information
-  free            — Memory usage
-  top             — Process list
-  exit            — Close terminal`,
-
-      ls: (args) => {
-        const path = args[0] ? resolvePath(args[0]) : cwd;
-        const items = FS[path];
-        if (!items) return `<span class="term-err">ls: cannot access '${args[0] || path}': No such file or directory</span>`;
-        if (items.length === 0) return '';
-        return items.map(f => {
-          const fullPath = path === '/' ? '/' + f : path + '/' + f;
-          const isDir = FS[fullPath] !== undefined;
-          return isDir ? `<span class="term-info">${f}/</span>` : `<span class="term-out">${f}</span>`;
-        }).join('  ');
-      },
-
-      cd: (args) => {
-        if (!args[0] || args[0] === '~') { cwd = '/home/sintex'; return null; }
-        const path = resolvePath(args[0]);
-        if (FS[path] !== undefined) { cwd = path; return null; }
-        return `<span class="term-err">cd: ${args[0]}: No such directory</span>`;
-      },
-
-      pwd: () => cwd,
-      whoami: () => 'sintex',
-      date: () => new Date().toString(),
-      clear: () => { output.innerHTML = ''; return null; },
-
-      neofetch: () => `<span class="term-info">
-       ____  _       _             ___  ____
-      / ___|(_)_ __ | |_ _____  __/ _ \\/ ___|
-      \\___ \\| | '_ \\| __/ _ \\ \\/ / | | \\___ \\
-       ___) | | | | | ||  __/>  <| |_| |___) |
-      |____/|_|_| |_|\\__\\___/_/\\_\\\\___/|____/
-</span>
-  <span class="term-out">OS:</span>       SintexOS 1.0.0 x86_64/arm64
-  <span class="term-out">Kernel:</span>   BitNet 1.58-bit (ternary)
-  <span class="term-out">Shell:</span>    sintex-sh 1.0
-  <span class="term-out">Engine:</span>   {-1, 0, +1} Ternary Matrix
-  <span class="term-out">CPU:</span>      ${navigator.hardwareConcurrency || '?'}x cores
-  <span class="term-out">GPU:</span>      Canvas2D HW Accelerated
-  <span class="term-out">Memory:</span>   ${navigator.deviceMemory || '?'} GB (BitNet compressed)
-  <span class="term-out">Display:</span>  ${screen.width}x${screen.height}
-  <span class="term-out">Theme:</span>    ${State.settings.theme}
-  <span class="term-out">Agent:</span>    OpenClaw JARVIS v2.0
-  <span class="term-out">Uptime:</span>   ${Math.floor((Date.now() - performance.timeOrigin) / 1000)}s`,
-
-      bitnet: (args) => {
-        if (args[0] === '--status' || !args[0]) return `<span class="term-info">BitNet 1.58-bit Engine Status</span>
-  Status:     <span class="term-info">ONLINE</span>
-  Model:      bitnet-b1.58-2B-4T
-  Weights:    {-1, 0, +1} ternary
-  Speedup:    6.17x vs FP16
-  Energy:     -82% reduction
-  Quantize:   1.58-bit (log₂3)
-  Backend:    Groq → Together → Cache`;
-        if (args[0] === '--version') return 'bitnet v1.58.0 (Microsoft Research / Sintex.AI)';
-        if (args[0] === '--search') {
-          const q = args.slice(1).join(' ');
-          if (!q) return '<span class="term-err">Usage: bitnet --search "query"</span>';
-          return `<span class="term-warn">Searching: "${q}"...</span>\n<span class="term-info">Use Sintex AI app for full search results.</span>`;
-        }
-        return 'Usage: bitnet [--status|--version|--search "query"|--help]';
-      },
-
-      openclaw: () => `<span class="term-info">OpenClaw Agent Hub</span>
-  Agent:      JARVIS (main, claude-opus-4-6)
-  Gateway:    ws://127.0.0.1:18789
-  Status:     <span class="term-warn">STANDBY</span> (connect via sintex.ai)
-  Browser:    CDP port 18800
-  Agents:     1 registered (JARVIS)
-  Backup:     */30 auto-backup.sh (ACTIVE)`,
-
-      echo: (args) => args.join(' '),
-      history: () => history.map((c, i) => `  ${i + 1}  ${c}`).join('\n'),
-
-      'uname': (args) => {
-        if (args[0] === '-a') return 'SintexOS 1.0.0 bitnet-1.58 #1 SMP PREEMPT_TERNARY x86_64 GNU/SintexOS';
-        return 'SintexOS';
-      },
-
-      free: () => `              total       used       free     shared    buffers     cached
-Mem:        ${navigator.deviceMemory || 8}G        2.1G       ${(navigator.deviceMemory || 8) - 2.1}G       128M       256M       1.2G
-BitNet:     ∞ (compressed)    1.4G       ∞`,
-
-      top: () => `  PID  USER     CPU%  MEM%  COMMAND
-    1  root      0.1   0.5  [bitnet-kernel]
-   42  sintex    2.3   1.2  sintex-compositor
-  128  sintex    1.1   0.8  sintex-search
-  256  sintex    0.4   0.3  openclaw-agent
-  512  sintex    0.2   0.1  wallpaper-rain
- 1024  sintex    0.1   0.1  clock-daemon`,
-
-      exit: () => { /* will be handled in execute */ return null; }
-    };
-
-    function resolvePath(p) {
-      if (p.startsWith('/')) return p.replace(/\/+$/, '') || '/';
-      if (p === '..') {
-        const parts = cwd.split('/').filter(Boolean);
-        parts.pop();
-        return '/' + parts.join('/') || '/';
-      }
-      if (p === '.') return cwd;
-      if (p === '~') return '/home/sintex';
-      return (cwd === '/' ? '/' : cwd + '/') + p;
-    }
-
-    function execute(cmdStr) {
-      const parts = cmdStr.trim().split(/\s+/);
-      const cmd = parts[0];
-      const args = parts.slice(1);
-
-      // Echo command
-      const line = document.createElement('div');
-      line.className = 'term-line';
-      line.innerHTML = `<span class="term-prompt"><span class="term-prompt-user">sintex</span>@<span class="term-info">os</span>:<span class="term-prompt-path">${cwd}</span>$</span><span class="term-cmd"> ${escapeHtml(cmdStr)}</span>`;
-      output.appendChild(line);
-
-      if (cmd === 'exit') {
-        // Find and close the terminal window
-        for (const [id, w] of State.windows) {
-          if (w.appId === 'terminal') { closeWindow(id); return; }
-        }
-        return;
-      }
-
-      const fn = CMDS[cmd];
-      let result;
-      if (fn) {
-        result = fn(args);
-      } else {
-        result = `<span class="term-err">bash: ${escapeHtml(cmd)}: command not found</span>`;
-      }
-
-      if (result !== null && result !== undefined) {
-        const out = document.createElement('div');
-        out.className = 'term-line';
-        out.innerHTML = result;
-        output.appendChild(out);
-      }
-      output.scrollTop = output.scrollHeight;
-    }
-
-    const inputRow = document.createElement('div');
-    inputRow.className = 'term-input-row';
-    const promptEl = document.createElement('span');
-    promptEl.className = 'term-prompt';
-    const updatePrompt = () => {
-      promptEl.innerHTML = `<span class="term-prompt-user">sintex</span>@<span class="term-info">os</span>:<span class="term-prompt-path">${cwd}</span>$`;
-    };
-    updatePrompt();
-
-    const input = document.createElement('input');
-    input.className = 'term-input';
-    input.type = 'text';
-    input.autocomplete = 'off';
-    input.spellcheck = false;
-    input.autofocus = true;
-
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        const cmd = input.value.trim();
-        if (!cmd) return;
-        history.unshift(cmd);
-        histIdx = -1;
-        input.value = '';
-        execute(cmd);
-        updatePrompt();
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        histIdx = Math.min(histIdx + 1, history.length - 1);
-        if (histIdx >= 0) input.value = history[histIdx];
-      } else if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        histIdx = Math.max(histIdx - 1, -1);
-        input.value = histIdx >= 0 ? history[histIdx] : '';
-      } else if (e.key === 'Tab') {
-        e.preventDefault();
-        // Tab completion for commands
-        const partial = input.value.trim();
-        if (partial) {
-          const matches = Object.keys(CMDS).filter(c => c.startsWith(partial));
-          if (matches.length === 1) input.value = matches[0] + ' ';
-        }
-      } else if (e.key === 'l' && e.ctrlKey) {
-        e.preventDefault();
-        output.innerHTML = '';
-      }
-    });
-
-    inputRow.appendChild(promptEl);
-    inputRow.appendChild(input);
-    wrap.appendChild(output);
-    wrap.appendChild(inputRow);
-
-    // Focus input when clicking terminal
-    wrap.addEventListener('click', () => input.focus());
-    setTimeout(() => input.focus(), 100);
-
-    return wrap;
-  }
-
-  /* --- FILE MANAGER --- */
-  function renderFileManager() {
-    const wrap = document.createElement('div');
-    wrap.className = 'app-files';
-    let cwd = '/home/sintex';
-
-    const FS = {
-      '/': { type: 'dir', children: { boot: 'dir', etc: 'dir', home: 'dir', usr: 'dir', opt: 'dir', proc: 'dir' } },
-      '/home': { type: 'dir', children: { sintex: 'dir' } },
-      '/home/sintex': { type: 'dir', children: {
-        Desktop: 'dir', Documents: 'dir', Downloads: 'dir',
-        '.bitnet': 'dir', '.openclaw': 'dir', '.config': 'dir'
-      }},
-      '/home/sintex/Desktop': { type: 'dir', children: { 'Sintex AI.lnk': 'file', 'Terminal.lnk': 'file', 'README.md': 'file' } },
-      '/home/sintex/Documents': { type: 'dir', children: {
-        'BitNet-Research.pdf': 'file', 'Sovereign-Stack.md': 'file',
-        'zero-to-1m-book.md': 'file', 'DeFi-Playbook.md': 'file'
-      }},
-      '/home/sintex/Downloads': { type: 'dir', children: {} },
-      '/home/sintex/.bitnet': { type: 'dir', children: {
-        models: 'dir', 'config.json': 'file', 'README.md': 'file'
-      }},
-      '/home/sintex/.bitnet/models': { type: 'dir', children: {
-        'bitnet-b1.58-2B-4T.gguf': 'file', 'bitnet-b1.58-700M.gguf': 'file'
-      }},
-      '/home/sintex/.openclaw': { type: 'dir', children: {
-        agents: 'dir', workspace: 'dir', 'node.json': 'file'
-      }},
-      '/home/sintex/.openclaw/agents': { type: 'dir', children: { 'jarvis.json': 'file', 'config.json': 'file' } },
-      '/home/sintex/.openclaw/workspace': { type: 'dir', children: {
-        'MEMORY.md': 'file', 'HEARTBEAT.md': 'file', memory: 'dir', content: 'dir'
-      }}
-    };
-
-    function getIcon(name, isDir) {
-      if (isDir) return '📁';
-      const ext = name.split('.').pop().toLowerCase();
-      const icons = { md: '📄', pdf: '📕', json: '📋', txt: '📝', gguf: '🤖', lnk: '🔗', py: '🐍', js: '📜' };
-      return icons[ext] || '📄';
-    }
-
-    function renderDir() {
-      const dir = FS[cwd];
-      if (!dir) return;
-      pathEl.value = cwd;
-      grid.innerHTML = '';
-
-      // Parent directory
-      if (cwd !== '/') {
-        const parent = document.createElement('div');
-        parent.className = 'file-item';
-        parent.innerHTML = `<div class="file-icon">📁</div><div class="file-name">..</div>`;
-        parent.addEventListener('dblclick', () => { cwd = cwd.split('/').slice(0, -1).join('/') || '/'; renderDir(); });
-        grid.appendChild(parent);
-      }
-
-      const children = dir.children;
-      const entries = Object.entries(children).sort((a, b) => {
-        if (a[1] === 'dir' && b[1] !== 'dir') return -1;
-        if (a[1] !== 'dir' && b[1] === 'dir') return 1;
-        return a[0].localeCompare(b[0]);
-      });
-
-      entries.forEach(([name, type]) => {
-        const el = document.createElement('div');
-        el.className = 'file-item';
-        el.innerHTML = `<div class="file-icon">${getIcon(name, type === 'dir')}</div><div class="file-name">${name}</div>`;
-        el.addEventListener('click', () => {
-          $$('.file-item', grid).forEach(f => f.classList.remove('selected'));
-          el.classList.add('selected');
-        });
-        el.addEventListener('dblclick', () => {
-          if (type === 'dir') {
-            cwd = cwd === '/' ? '/' + name : cwd + '/' + name;
-            renderDir();
-          }
-        });
-        grid.appendChild(el);
-      });
-
-      statusBar.textContent = `${entries.length} items — ${cwd}`;
-    }
-
-    // Toolbar
-    const toolbar = document.createElement('div');
-    toolbar.className = 'files-toolbar';
-    const backBtn = document.createElement('button');
-    backBtn.className = 'files-btn';
-    backBtn.textContent = '←';
-    backBtn.addEventListener('click', () => { if (cwd !== '/') { cwd = cwd.split('/').slice(0, -1).join('/') || '/'; renderDir(); } });
-    const homeBtn = document.createElement('button');
-    homeBtn.className = 'files-btn';
-    homeBtn.textContent = '🏠';
-    homeBtn.addEventListener('click', () => { cwd = '/home/sintex'; renderDir(); });
-    const pathEl = document.createElement('input');
-    pathEl.className = 'files-path';
-    pathEl.value = cwd;
-    pathEl.readOnly = true;
-    toolbar.append(backBtn, homeBtn, pathEl);
-
-    const grid = document.createElement('div');
-    grid.className = 'files-grid';
-    const statusBar = document.createElement('div');
-    statusBar.className = 'files-statusbar';
-
-    wrap.append(toolbar, grid, statusBar);
-    renderDir();
-    return wrap;
-  }
-
-  /* --- SETTINGS --- */
-  function renderSettings() {
-    const wrap = document.createElement('div');
-    wrap.className = 'app-settings';
-
-    const sections = {
-      appearance: `
-        <div class="settings-section">
-          <div class="settings-title">Appearance</div>
-          <div class="settings-row">
-            <span class="settings-label">Theme</span>
-            <div style="display:flex;gap:8px">
-              <button class="settings-toggle ${State.settings.theme === 'dark' ? '' : 'on'}" id="set-theme">
-              </button>
-              <span style="font-size:12px;color:var(--os-text3)">${State.settings.theme === 'light' ? 'Light' : 'Dark'}</span>
-            </div>
-          </div>
-          <div class="settings-row">
-            <span class="settings-label">Accent Color</span>
-            <div class="settings-colors">
-              <div class="settings-color ${State.settings.accentColor === '#24A0ED' ? 'active' : ''}" style="background:#24A0ED" data-color="#24A0ED"></div>
-              <div class="settings-color ${State.settings.accentColor === '#a371f7' ? 'active' : ''}" style="background:#a371f7" data-color="#a371f7"></div>
-              <div class="settings-color ${State.settings.accentColor === '#3fb950' ? 'active' : ''}" style="background:#3fb950" data-color="#3fb950"></div>
-              <div class="settings-color ${State.settings.accentColor === '#f85149' ? 'active' : ''}" style="background:#f85149" data-color="#f85149"></div>
-              <div class="settings-color ${State.settings.accentColor === '#d29922' ? 'active' : ''}" style="background:#d29922" data-color="#d29922"></div>
-            </div>
-          </div>
-          <div class="settings-row">
-            <span class="settings-label">Animations</span>
-            <button class="settings-toggle ${State.settings.animations ? 'on' : ''}" id="set-anim"></button>
-          </div>
-        </div>`,
-      wallpaper: `
-        <div class="settings-section">
-          <div class="settings-title">Wallpaper</div>
-          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px">
-            <div class="file-item ${State.settings.wallpaper === 'rain' ? 'selected' : ''}" data-wp="rain" style="padding:20px">
-              <div class="file-icon">🌧️</div><div class="file-name">Ternary Rain</div>
-            </div>
-            <div class="file-item ${State.settings.wallpaper === 'gradient' ? 'selected' : ''}" data-wp="gradient" style="padding:20px">
-              <div class="file-icon">🌌</div><div class="file-name">Deep Space</div>
-            </div>
-            <div class="file-item ${State.settings.wallpaper === 'solid-dark' ? 'selected' : ''}" data-wp="solid-dark" style="padding:20px">
-              <div class="file-icon">⬛</div><div class="file-name">Solid Dark</div>
-            </div>
-            <div class="file-item ${State.settings.wallpaper === 'solid-light' ? 'selected' : ''}" data-wp="solid-light" style="padding:20px">
-              <div class="file-icon">⬜</div><div class="file-name">Solid Light</div>
-            </div>
-          </div>
-        </div>`,
-      about: `
-        <div class="settings-section">
-          <div class="settings-title">About SintexOS</div>
-          <div style="padding:16px;background:var(--os-bg2);border-radius:var(--os-radius-sm);border:1px solid var(--os-border)">
-            <div style="font-size:24px;font-weight:700;margin-bottom:8px">
-              <span style="color:var(--os-accent)">S</span><span style="color:var(--os-text3)">.</span><span>OS</span>
-            </div>
-            <div style="font-size:13px;color:var(--os-text2);line-height:1.8">
-              <strong>Version:</strong> 1.0.0 (Build 158-ternary)<br>
-              <strong>Engine:</strong> BitNet 1.58-bit ({-1, 0, +1})<br>
-              <strong>Platform:</strong> ${navigator.platform}<br>
-              <strong>Screen:</strong> ${screen.width}x${screen.height}<br>
-              <strong>Cores:</strong> ${navigator.hardwareConcurrency || 'N/A'}<br>
-              <strong>Memory:</strong> ${navigator.deviceMemory || 'N/A'} GB<br>
-              <strong>Agent:</strong> OpenClaw JARVIS (claude-opus-4-6)<br>
-              <strong>Philosophy:</strong> Linux openness + Perplexity AI intelligence<br>
-              <strong>License:</strong> Sovereign Open Source<br><br>
-              <em style="color:var(--os-text3)">"Lightweight but powerful. Built for humans, powered by AI."</em>
-            </div>
-          </div>
-        </div>`
-    };
-
-    // Nav
-    const nav = document.createElement('div');
-    nav.className = 'settings-nav';
-    const navItems = [
-      { id: 'appearance', label: '🎨 Appearance' },
-      { id: 'wallpaper', label: '🖼️ Wallpaper' },
-      { id: 'about', label: 'ℹ️ About' }
-    ];
-
-    const content = document.createElement('div');
-    content.className = 'settings-content';
-
-    function showSection(id) {
-      content.innerHTML = sections[id];
-      $$('.settings-nav-item', nav).forEach(n => n.classList.toggle('active', n.dataset.section === id));
-      bindSettingsEvents();
-    }
-
-    navItems.forEach(item => {
-      const el = document.createElement('div');
-      el.className = 'settings-nav-item';
-      el.dataset.section = item.id;
-      el.textContent = item.label;
-      el.addEventListener('click', () => showSection(item.id));
-      nav.appendChild(el);
-    });
-
-    function bindSettingsEvents() {
-      const themeBtn = $('#set-theme', content);
-      if (themeBtn) themeBtn.addEventListener('click', () => {
-        State.settings.theme = State.settings.theme === 'dark' ? 'light' : 'dark';
-        document.body.classList.toggle('light-os', State.settings.theme === 'light');
-        Storage.set('settings', State.settings);
-        stopWallpaper(); initWallpaper();
-        showSection('appearance');
-      });
-
-      const animBtn = $('#set-anim', content);
-      if (animBtn) animBtn.addEventListener('click', () => {
-        State.settings.animations = !State.settings.animations;
-        Storage.set('settings', State.settings);
-        showSection('appearance');
-      });
-
-      $$('.settings-color', content).forEach(c => {
-        c.addEventListener('click', () => {
-          State.settings.accentColor = c.dataset.color;
-          document.documentElement.style.setProperty('--os-accent', c.dataset.color);
-          Storage.set('settings', State.settings);
-          showSection('appearance');
-        });
-      });
-
-      $$('[data-wp]', content).forEach(wp => {
-        wp.addEventListener('click', () => {
-          State.settings.wallpaper = wp.dataset.wp;
-          Storage.set('settings', State.settings);
-          stopWallpaper(); initWallpaper();
-          showSection('wallpaper');
-        });
-      });
-    }
-
-    wrap.append(nav, content);
-    showSection('appearance');
-    return wrap;
-  }
-
-  /* --- NOTEPAD --- */
-  function renderNotepad() {
-    const wrap = document.createElement('div');
-    wrap.className = 'app-notepad';
-
-    const toolbar = document.createElement('div');
-    toolbar.className = 'notepad-toolbar';
-    const newBtn = document.createElement('button');
-    newBtn.className = 'files-btn';
-    newBtn.textContent = '📄 New';
-    const saveInfo = document.createElement('span');
-    saveInfo.className = 'notepad-status';
-    saveInfo.textContent = 'Ready';
-    toolbar.append(newBtn, saveInfo);
-
-    const textarea = document.createElement('textarea');
-    textarea.className = 'notepad-area';
-    textarea.placeholder = 'Start typing...\n\nTip: Your notes are saved automatically to localStorage.';
-    textarea.value = Storage.get('notepad-content') || '';
-    textarea.spellcheck = true;
-
-    let saveTimer;
-    textarea.addEventListener('input', () => {
-      saveInfo.textContent = 'Editing...';
-      clearTimeout(saveTimer);
-      saveTimer = setTimeout(() => {
-        Storage.set('notepad-content', textarea.value);
-        saveInfo.textContent = `Saved — ${textarea.value.length} chars`;
-      }, 600);
-    });
-
-    newBtn.addEventListener('click', () => {
-      if (textarea.value && !confirm('Clear current note?')) return;
-      textarea.value = '';
-      Storage.set('notepad-content', '');
-      saveInfo.textContent = 'New note';
-    });
-
-    wrap.append(toolbar, textarea);
-    setTimeout(() => textarea.focus(), 100);
-    return wrap;
-  }
-
-  /* --- SYSTEM MONITOR --- */
-  function renderMonitor() {
-    const wrap = document.createElement('div');
-    wrap.className = 'app-monitor';
-
-    const stats = { cpu: 15, ram: 38, bitnet: 0, net: 2 };
-    const histData = { cpu: [], ram: [], bitnet: [], net: [] };
-
-    const cards = [
-      { key: 'cpu', label: 'CPU', color: 'var(--os-accent)', unit: '%' },
-      { key: 'ram', label: 'Memory', color: 'var(--os-purple)', unit: '%' },
-      { key: 'bitnet', label: 'BitNet Engine', color: 'var(--os-green)', unit: '%' },
-      { key: 'net', label: 'Network', color: 'var(--os-orange)', unit: ' MB/s' }
-    ];
-
-    const cardEls = {};
-
-    cards.forEach(c => {
-      const card = document.createElement('div');
-      card.className = 'monitor-card';
-      card.innerHTML = `
-        <div class="monitor-card-header">
-          <span class="monitor-card-label">${c.label}</span>
-          <span class="monitor-card-value" style="color:${c.color}">0${c.unit}</span>
-        </div>
-        <div class="monitor-bar"><div class="monitor-bar-fill" style="width:0%;background:${c.color}"></div></div>
-        <canvas class="monitor-spark" width="200" height="40"></canvas>
-      `;
-      wrap.appendChild(card);
-      cardEls[c.key] = {
-        value: card.querySelector('.monitor-card-value'),
-        bar: card.querySelector('.monitor-bar-fill'),
-        canvas: card.querySelector('.monitor-spark'),
-        color: c.color,
-        unit: c.unit
-      };
-    });
-
-    function drawSparkline(canvas, data, color) {
-      const ctx = canvas.getContext('2d');
-      const w = canvas.width, h = canvas.height;
-      ctx.clearRect(0, 0, w, h);
-      if (data.length < 2) return;
-
-      // Fill
-      ctx.beginPath();
-      data.forEach((v, i) => {
-        const x = (i / (data.length - 1)) * w;
-        const y = h - (v / 100) * h;
-        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-      });
-      ctx.lineTo(w, h); ctx.lineTo(0, h); ctx.closePath();
-      const style = getComputedStyle(document.documentElement);
-      const rgb = color.startsWith('var') ? style.getPropertyValue(color.replace('var(', '').replace(')', '')).trim() : color;
-      ctx.fillStyle = rgb + '15';
-      ctx.fill();
-
-      // Line
-      ctx.beginPath();
-      data.forEach((v, i) => {
-        const x = (i / (data.length - 1)) * w;
-        const y = h - (v / 100) * h;
-        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-      });
-      ctx.strokeStyle = rgb;
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-    }
-
-    function tick() {
-      const lerp = (a, b, t) => a + (b - a) * t;
-      stats.cpu = Math.max(3, Math.min(95, lerp(stats.cpu, stats.cpu + (Math.random() - 0.5) * 20, 0.3)));
-      stats.ram = Math.max(25, Math.min(85, lerp(stats.ram, stats.ram + (Math.random() - 0.5) * 6, 0.1)));
-      stats.bitnet = Math.max(0, Math.min(100, lerp(stats.bitnet, 40 + (Math.random() - 0.5) * 60, 0.15)));
-      stats.net = Math.max(0, Math.min(50, Math.abs(stats.net + (Math.random() - 0.5) * 8)));
-
-      cards.forEach(c => {
-        const el = cardEls[c.key];
-        const val = Math.round(stats[c.key] * 10) / 10;
-        el.value.textContent = val + c.unit;
-        el.bar.style.width = Math.min(stats[c.key], 100) + '%';
-        histData[c.key].push(stats[c.key]);
-        if (histData[c.key].length > 60) histData[c.key].shift();
-        drawSparkline(el.canvas, histData[c.key], c.color);
-      });
-    }
-
-    // BitNet probe
-    if (typeof BitNetClient !== 'undefined') {
-      BitNetClient.search('status').then(() => {
-        stats.bitnet = 85;
-        cardEls.bitnet.value.textContent = 'ONLINE';
-      }).catch(() => {
-        cardEls.bitnet.value.textContent = 'LOCAL';
-      });
-    }
-
-    tick();
-    const interval = setInterval(tick, 1500);
-    wrap._cleanup = () => clearInterval(interval);
-    return wrap;
-  }
-
-  /* --- BROWSER --- */
-  function renderBrowser(url) {
-    const wrap = document.createElement('div');
-    wrap.className = 'app-browser';
-
-    const bar = document.createElement('div');
-    bar.className = 'browser-bar';
-
-    const backBtn = document.createElement('button');
-    backBtn.className = 'browser-nav-btn';
-    backBtn.textContent = '←';
-
-    const fwdBtn = document.createElement('button');
-    fwdBtn.className = 'browser-nav-btn';
-    fwdBtn.textContent = '→';
-
-    const refreshBtn = document.createElement('button');
-    refreshBtn.className = 'browser-nav-btn';
-    refreshBtn.textContent = '↻';
-
-    const urlInput = document.createElement('input');
-    urlInput.className = 'browser-url';
-    urlInput.value = url || 'https://sintex.ai';
-
-    const iframe = document.createElement('iframe');
-    iframe.className = 'browser-frame';
-    iframe.src = url || 'https://sintex.ai';
-    iframe.sandbox = 'allow-scripts allow-same-origin allow-forms allow-popups';
-
-    urlInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        let u = urlInput.value.trim();
-        if (u === 'sintex:search') u = '/search.html';
-        else if (u === 'sintex:home') u = '/';
-        else if (u === 'sintex:os') u = '/os.html';
-        else if (!u.startsWith('http') && !u.startsWith('/')) u = 'https://' + u;
-        iframe.src = u;
-      }
-    });
-
-    backBtn.addEventListener('click', () => { try { iframe.contentWindow.history.back(); } catch {} });
-    fwdBtn.addEventListener('click', () => { try { iframe.contentWindow.history.forward(); } catch {} });
-    refreshBtn.addEventListener('click', () => { iframe.src = iframe.src; });
-
-    bar.append(backBtn, fwdBtn, refreshBtn, urlInput);
-    wrap.append(bar, iframe);
-    return wrap;
-  }
-
-  /* --- OPENCLAW --- */
-  function renderOpenClaw() {
-    const wrap = document.createElement('div');
-    wrap.style.cssText = 'height:100%;display:flex;flex-direction:column;background:var(--os-bg);';
-
-    const header = document.createElement('div');
-    header.style.cssText = 'padding:20px;border-bottom:1px solid var(--os-border);background:var(--os-bg2);';
-    header.innerHTML = `
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
-        <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--os-accent),var(--os-purple));display:flex;align-items:center;justify-content:center;font-size:24px">🤖</div>
-        <div>
-          <div style="font-size:18px;font-weight:600">OpenClaw Agent Hub</div>
-          <div style="font-size:12px;color:var(--os-text3)">AI Agent Orchestration — Sovereign Computing</div>
-        </div>
+  sections.forEach(s=>{
+    const el=h('div',{className:'set-nav-item'});el.dataset.s=s.id;
+    el.innerHTML=`${s.icon}<span>${s.label}</span>`;
+    el.onclick=()=>show(s.id);nav.appendChild(el);
+  });
+  w.append(nav,body);show('system');return w;
+}
+
+// --- OPENCLAW AGENTS ---
+function renderAgents(){
+  const w=h('div');
+  w.style.cssText='height:100%;display:flex;flex-direction:column;background:#191919;overflow-y:auto';
+  w.innerHTML=`
+    <div style="padding:24px;border-bottom:1px solid #333">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
+        <div style="width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,var(--accent),var(--purple));
+          display:flex;align-items:center;justify-content:center">${ICO.agent}</div>
+        <div><div style="font-size:20px;font-weight:600">OpenClaw</div>
+          <div style="font-size:12px;color:var(--text3)">Sovereign AI Agent Framework</div></div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
-        <div style="padding:10px;background:var(--os-bg);border-radius:var(--os-radius-sm);border:1px solid var(--os-border);text-align:center">
-          <div style="font-size:20px;font-weight:700;color:var(--os-green)">1</div>
-          <div style="font-size:10px;color:var(--os-text3)">Active Agents</div>
-        </div>
-        <div style="padding:10px;background:var(--os-bg);border-radius:var(--os-radius-sm);border:1px solid var(--os-border);text-align:center">
-          <div style="font-size:20px;font-weight:700;color:var(--os-accent)">JARVIS</div>
-          <div style="font-size:10px;color:var(--os-text3)">Primary Agent</div>
-        </div>
-        <div style="padding:10px;background:var(--os-bg);border-radius:var(--os-radius-sm);border:1px solid var(--os-border);text-align:center">
-          <div style="font-size:20px;font-weight:700;color:var(--os-orange)">⚡</div>
-          <div style="font-size:10px;color:var(--os-text3)">BitNet Engine</div>
+        ${[['1','Active','var(--green)'],['JARVIS','Primary','var(--accent)'],['BitNet','Engine','var(--orange)']].map(([v,l,c])=>
+          `<div style="padding:14px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--radius);text-align:center">
+            <div style="font-size:22px;font-weight:600;color:${c}">${v}</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:4px">${l}</div></div>`
+        ).join('')}
+      </div>
+    </div>
+    <div style="padding:16px;flex:1">
+      ${[
+        {name:'JARVIS',model:'claude-opus-4-6',status:'STANDBY',statusColor:'var(--orange)',
+          desc:'Primary orchestrator. Task execution, memory management, multi-agent coordination. Connected via WebSocket gateway.'},
+        {name:'Skynet (Ethical)',model:'swarm-mode',status:'IDLE',statusColor:'var(--text3)',
+          desc:'Ethical swarm intelligence for parallel task execution. Bounties, content generation, and revenue optimization.'},
+        {name:'BitNet Search',model:'bitnet-1.58',status:'ONLINE',statusColor:'var(--green)',
+          desc:'AI search engine on 1.58-bit ternary weights. Fallback chain: BitNet → Groq → Together → Local Cache.'}
+      ].map(a=>`
+        <div style="padding:16px;background:rgba(255,255,255,.025);border:1px solid var(--border);
+          border-radius:var(--radius);margin-bottom:8px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <span style="font-size:15px;font-weight:600">${a.name}</span>
+            <span style="font-size:11px;padding:3px 10px;border-radius:12px;background:${a.statusColor}15;color:${a.statusColor}">${a.status}</span>
+          </div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-family:var(--mono)">Model: ${a.model}</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.5">${a.desc}</div>
+        </div>`).join('')}
+      <div style="padding:14px;background:var(--accent-bg);border:1px solid rgba(96,205,255,.15);border-radius:var(--radius);margin-top:12px">
+        <div style="font-size:12px;color:var(--accent);font-weight:600;margin-bottom:6px">Connection</div>
+        <div style="font-size:11px;color:var(--text3);font-family:var(--mono);line-height:1.8">
+          Gateway: ws://127.0.0.1:18789<br>Browser CDP: port 18800<br>
+          Every user will have their own sovereign AI agent.<br>OpenClaw is the framework that makes it possible.
         </div>
       </div>
-    `;
+    </div>`;
+  return w;
+}
 
-    const body = document.createElement('div');
-    body.style.cssText = 'flex:1;padding:16px;overflow-y:auto;';
+// ===== UTILITY =====
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
 
-    const agents = [
-      { name: 'JARVIS', model: 'claude-opus-4-6', status: 'standby', desc: 'Primary orchestrator agent. Handles task execution, memory management, and multi-agent coordination.' },
-      { name: 'Skynet (Ethical)', model: 'swarm-mode', status: 'idle', desc: 'Ethical swarm intelligence for parallel task execution across bounties, content, and revenue streams.' },
-      { name: 'BitNet Search', model: 'bitnet-1.58', status: 'online', desc: 'AI search engine powered by 1.58-bit ternary weights. Fallback: Groq → Together → Cache.' }
-    ];
+// ===== KEYBOARD =====
+document.addEventListener('keydown',e=>{
+  if(e.key==='Meta'||(e.ctrlKey&&e.key===' ')){e.preventDefault();toggleStart()}
+  if(e.key==='Escape'){if(S.startOpen)toggleStart(false);if(S.searchOpen)toggleSearch(false)}
+});
 
-    agents.forEach(a => {
-      const card = document.createElement('div');
-      card.style.cssText = 'padding:14px;background:var(--os-bg2);border:1px solid var(--os-border);border-radius:var(--os-radius-sm);margin-bottom:8px;';
-      const statusColor = a.status === 'online' ? 'var(--os-green)' : a.status === 'standby' ? 'var(--os-orange)' : 'var(--os-text3)';
-      card.innerHTML = `
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-          <div style="font-size:14px;font-weight:600">${a.name}</div>
-          <div style="font-size:11px;padding:2px 8px;border-radius:10px;background:${statusColor}20;color:${statusColor};font-weight:500">${a.status.toUpperCase()}</div>
-        </div>
-        <div style="font-size:11px;color:var(--os-text3);margin-bottom:4px">Model: ${a.model}</div>
-        <div style="font-size:12px;color:var(--os-text2)">${a.desc}</div>
-      `;
-      body.appendChild(card);
-    });
-
-    const connectInfo = document.createElement('div');
-    connectInfo.style.cssText = 'padding:12px;background:var(--os-accent-bg);border:1px solid rgba(36,160,237,0.2);border-radius:var(--os-radius-sm);margin-top:8px;';
-    connectInfo.innerHTML = `
-      <div style="font-size:12px;color:var(--os-accent);font-weight:500;margin-bottom:4px">🔗 Connection Info</div>
-      <div style="font-size:11px;color:var(--os-text2);font-family:var(--os-mono);line-height:1.6">
-        Gateway: ws://127.0.0.1:18789<br>
-        Browser CDP: port 18800<br>
-        Status: Connect your OpenClaw node to activate agents<br>
-        <br>
-        <em>Every user will soon have their own AI agent.<br>OpenClaw is the sovereign agent framework.</em>
-      </div>
-    `;
-    body.appendChild(connectInfo);
-
-    wrap.append(header, body);
-    return wrap;
-  }
-
-  /* --- CHATGPT --- */
-  function renderChatGPT() {
-    const wrap = document.createElement('div');
-    wrap.style.cssText = 'height:100%;display:flex;flex-direction:column;background:var(--os-bg);';
-
-    const header = document.createElement('div');
-    header.style.cssText = 'padding:16px;border-bottom:1px solid var(--os-border);background:var(--os-bg2);display:flex;align-items:center;gap:12px;';
-    header.innerHTML = `
-      <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#10a37f,#1a7f64);display:flex;align-items:center;justify-content:center;font-size:18px">💬</div>
-      <div>
-        <div style="font-size:15px;font-weight:600">ChatGPT Integration</div>
-        <div style="font-size:11px;color:var(--os-text3)">Connected via SintexOS Bridge</div>
-      </div>
-    `;
-
-    const messages = document.createElement('div');
-    messages.style.cssText = 'flex:1;padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;';
-
-    // Welcome message
-    const welcomeMsg = document.createElement('div');
-    welcomeMsg.style.cssText = 'padding:14px;background:var(--os-bg2);border-radius:var(--os-radius-sm);border:1px solid var(--os-border);';
-    welcomeMsg.innerHTML = `
-      <div style="font-size:13px;color:var(--os-text);line-height:1.6">
-        Welcome to <strong>SintexOS ChatGPT Bridge</strong>. This interface connects to AI services through the BitNet 1.58-bit engine.<br><br>
-        Type a message below to interact with the AI. The system uses the same fallback chain as Sintex AI Search:<br>
-        <span style="color:var(--os-accent)">BitNet → Groq → Together → Local Cache</span>
-      </div>
-    `;
-    messages.appendChild(welcomeMsg);
-
-    const inputArea = document.createElement('div');
-    inputArea.style.cssText = 'padding:12px;border-top:1px solid var(--os-border);background:var(--os-bg2);display:flex;gap:8px;';
-
-    const chatInput = document.createElement('input');
-    chatInput.type = 'text';
-    chatInput.placeholder = 'Ask anything...';
-    chatInput.style.cssText = 'flex:1;padding:10px 14px;background:var(--os-bg);border:1px solid var(--os-border);border-radius:20px;color:var(--os-text);font-size:13px;font-family:var(--os-font);outline:none;';
-
-    const sendBtn = document.createElement('button');
-    sendBtn.textContent = '→';
-    sendBtn.style.cssText = 'width:36px;height:36px;border-radius:50%;background:var(--os-accent);border:none;color:#fff;font-size:16px;cursor:pointer;transition:background 0.15s;';
-
-    async function sendMessage() {
-      const text = chatInput.value.trim();
-      if (!text) return;
-      chatInput.value = '';
-
-      // User message
-      const userMsg = document.createElement('div');
-      userMsg.style.cssText = 'padding:10px 14px;background:var(--os-accent);color:#fff;border-radius:16px 16px 4px 16px;align-self:flex-end;max-width:80%;font-size:13px;';
-      userMsg.textContent = text;
-      messages.appendChild(userMsg);
-
-      // Thinking indicator
-      const thinking = document.createElement('div');
-      thinking.style.cssText = 'padding:10px 14px;background:var(--os-bg2);border:1px solid var(--os-border);border-radius:16px 16px 16px 4px;align-self:flex-start;font-size:12px;color:var(--os-text3);';
-      thinking.textContent = 'Thinking...';
-      messages.appendChild(thinking);
-      messages.scrollTop = messages.scrollHeight;
-
-      // Query BitNet
-      try {
-        const result = await (typeof BitNetClient !== 'undefined' ? BitNetClient.search(text) : Promise.resolve({ answer: 'BitNet client not loaded. Please refresh.' }));
-        thinking.style.color = 'var(--os-text)';
-        thinking.style.fontSize = '13px';
-        thinking.innerHTML = result.answer ? result.answer.replace(/\n/g, '<br>').substring(0, 2000) : 'No response available.';
-      } catch {
-        thinking.innerHTML = '<span style="color:var(--os-red)">Error connecting to AI service.</span>';
-      }
-      messages.scrollTop = messages.scrollHeight;
-    }
-
-    chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMessage(); });
-    sendBtn.addEventListener('click', sendMessage);
-
-    inputArea.append(chatInput, sendBtn);
-    wrap.append(header, messages, inputArea);
-    setTimeout(() => chatInput.focus(), 100);
-    return wrap;
-  }
-
-  /* ========== UTILITY ========== */
-  function escapeHtml(str) {
-    const d = document.createElement('div');
-    d.textContent = str;
-    return d.innerHTML;
-  }
-
-  /* ========== KEYBOARD SHORTCUTS ========== */
-  document.addEventListener('keydown', (e) => {
-    // Win key or Ctrl+Space = toggle start
-    if (e.key === 'Meta' || (e.ctrlKey && e.key === ' ')) {
-      e.preventDefault();
-      toggleStart();
-    }
-    // Ctrl+T = new terminal
-    if (e.ctrlKey && e.key === 't' && !e.shiftKey) {
-      // Only if no focused input
-      if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
-        e.preventDefault();
-        openApp('terminal');
-      }
-    }
-    // Ctrl+E = file manager
-    if (e.ctrlKey && e.key === 'e') {
-      if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
-        e.preventDefault();
-        openApp('files');
-      }
-    }
-    // Escape = close start menu
-    if (e.key === 'Escape' && State.startOpen) {
-      toggleStart(false);
-    }
-  });
-
-  /* ========== WINDOW RESIZE ========== */
-  let resizeDebounce;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeDebounce);
-    resizeDebounce = setTimeout(() => {
-      State.isMobile = window.innerWidth <= 480;
-    }, 200);
-  });
-
-  /* ========== INIT ========== */
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', boot);
-  } else {
-    boot();
-  }
+// ===== INIT =====
+document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boot):boot();
 
 })();

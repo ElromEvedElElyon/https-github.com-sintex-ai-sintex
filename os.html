@@ -1,113 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#0d1117">
-    <title>SintexOS — AI-Powered Operating System | BitNet 1.58-bit Engine</title>
-    <meta name="description" content="SintexOS is an AI-powered operating system running on BitNet 1.58-bit ternary engine. Linux philosophy meets Perplexity AI. Lightweight, powerful, sovereign.">
-    <meta name="keywords" content="SintexOS, AI operating system, BitNet OS, ternary computing, AI desktop, Linux AI, sovereign computing, decentralized OS">
-    <meta property="og:title" content="SintexOS — AI-Powered Operating System">
-    <meta property="og:description" content="The sovereign AI operating system. BitNet 1.58-bit engine. {-1, 0, +1} ternary computing. Built for humans, powered by AI.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://sintex.ai/os.html">
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "SoftwareApplication",
-        "name": "SintexOS",
-        "applicationCategory": "OperatingSystem",
-        "operatingSystem": "Web Browser (Cross-Platform)",
-        "description": "AI-powered operating system built on BitNet 1.58-bit ternary engine. Linux philosophy, Perplexity AI intelligence.",
-        "url": "https://sintex.ai/os.html",
-        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-        "creator": { "@type": "Organization", "name": "Sintex.AI", "url": "https://sintex.ai" }
-    }
-    </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="sintex-os.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#000000">
+<title>SintexOS — AI-Native Operating System</title>
+<meta name="description" content="SintexOS: The AI-native operating system. Built on BitNet 1.58-bit ternary engine. Windows 11 design meets Perplexity AI intelligence meets OpenClaw sovereign agents.">
+<meta property="og:title" content="SintexOS — AI-Native Operating System">
+<meta property="og:description" content="The future of computing. AI-native OS with sovereign agents, BitNet engine, and Perplexity-class search. Try it now.">
+<meta property="og:url" content="https://sintex.ai/os.html">
+<meta property="og:type" content="website">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"SintexOS","applicationCategory":"OperatingSystem","operatingSystem":"Cross-Platform","url":"https://sintex.ai/os.html","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"creator":{"@type":"Organization","name":"Sintex.AI","url":"https://sintex.ai"}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sintex-os.css">
 </head>
 <body>
-    <!-- BOOT SCREEN -->
-    <div id="os-boot">
-        <canvas id="boot-canvas"></canvas>
-        <div id="boot-logo">
-            <div class="boot-icon">
-                <span class="boot-s">S</span><span class="boot-dot">.</span><span class="boot-os">OS</span>
-            </div>
-            <div class="boot-sub">BitNet 1.58-bit Ternary Engine</div>
-            <div class="boot-progress"><div class="boot-bar"></div></div>
-            <div class="boot-status">Initializing kernel...</div>
-        </div>
+
+<!-- ===== BOOT ===== -->
+<div id="boot">
+  <canvas id="boot-fx"></canvas>
+  <div id="boot-center">
+    <svg id="boot-logo" width="64" height="64" viewBox="0 0 64 64" fill="none">
+      <rect x="4" y="4" width="24" height="24" rx="4" fill="#0078D4"/>
+      <rect x="36" y="4" width="24" height="24" rx="4" fill="#00BCF2"/>
+      <rect x="4" y="36" width="24" height="24" rx="4" fill="#00B294"/>
+      <rect x="36" y="36" width="24" height="24" rx="4" fill="#8764B8"/>
+    </svg>
+    <div id="boot-spinner"></div>
+    <div id="boot-text">SintexOS</div>
+  </div>
+</div>
+
+<!-- ===== LOCK SCREEN ===== -->
+<div id="lockscreen" class="hidden">
+  <div id="lock-bg"></div>
+  <div id="lock-content">
+    <div id="lock-time"></div>
+    <div id="lock-date"></div>
+    <div id="lock-hint">Click or press any key to unlock</div>
+  </div>
+</div>
+
+<!-- ===== DESKTOP ===== -->
+<div id="desktop">
+  <canvas id="wallpaper"></canvas>
+  <div id="desk-icons"></div>
+</div>
+
+<!-- ===== WINDOWS ===== -->
+<div id="win-layer"></div>
+
+<!-- ===== COPILOT SIDEBAR ===== -->
+<div id="copilot" class="closed">
+  <div id="copilot-header">
+    <div class="copilot-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a7 7 0 0 1 7 7c0 3-2 5.5-4 7l-3 3-3-3c-2-1.5-4-4-4-7a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+      <span>Copilot</span>
     </div>
+    <button id="copilot-close" class="win-ctrl-btn">
+      <svg width="14" height="14" viewBox="0 0 14 14"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <div id="copilot-body"></div>
+  <div id="copilot-input">
+    <textarea id="copilot-ask" placeholder="Ask me anything..." rows="1"></textarea>
+    <button id="copilot-send">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </div>
+</div>
 
-    <!-- DESKTOP -->
-    <div id="os-desktop">
-        <canvas id="os-wallpaper"></canvas>
-        <div id="os-icons"></div>
+<!-- ===== CONTEXT MENU ===== -->
+<div id="ctx" class="hidden">
+  <div class="ctx-item" data-a="terminal"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>Open Terminal</div>
+  <div class="ctx-item" data-a="notepad"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>New Note</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" data-a="display"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Display Settings</div>
+  <div class="ctx-item" data-a="personalize"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Personalize</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" data-a="refresh"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>Refresh</div>
+</div>
+
+<!-- ===== START MENU ===== -->
+<div id="start" class="hidden">
+  <div id="start-inner">
+    <div id="start-top">
+      <input type="text" id="start-search" placeholder="Type to search" autocomplete="off" spellcheck="false">
+      <svg class="start-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     </div>
-
-    <!-- WINDOWS LAYER -->
-    <div id="os-windows"></div>
-
-    <!-- CONTEXT MENU -->
-    <div id="os-ctx" class="os-ctx hidden">
-        <div class="os-ctx-item" data-action="new-note">New Note</div>
-        <div class="os-ctx-item" data-action="open-terminal">Open Terminal</div>
-        <div class="os-ctx-sep"></div>
-        <div class="os-ctx-item" data-action="settings">Settings</div>
-        <div class="os-ctx-item" data-action="refresh">Refresh Desktop</div>
-        <div class="os-ctx-sep"></div>
-        <div class="os-ctx-item" data-action="about">About SintexOS</div>
+    <div id="start-label">Pinned</div>
+    <div id="start-apps"></div>
+    <div id="start-label2">Recommended</div>
+    <div id="start-recent"></div>
+    <div id="start-bottom">
+      <div id="start-user">
+        <div class="user-avatar"></div>
+        <span>Sintex</span>
+      </div>
+      <button id="start-power" title="Power">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+      </button>
     </div>
+  </div>
+</div>
 
-    <!-- START MENU -->
-    <div id="os-start" class="hidden">
-        <div class="start-header">
-            <input type="text" id="start-search" placeholder="Search apps, files, settings..." autocomplete="off">
-        </div>
-        <div class="start-grid" id="start-grid"></div>
-        <div class="start-footer">
-            <div class="start-user">
-                <div class="start-avatar">S</div>
-                <span>Sintex User</span>
-            </div>
-            <div class="start-power">
-                <button class="start-power-btn" data-action="restart" title="Restart">&#8635;</button>
-                <button class="start-power-btn" data-action="shutdown" title="Exit to sintex.ai">&#9211;</button>
-            </div>
-        </div>
+<!-- ===== TASKBAR ===== -->
+<div id="taskbar">
+  <div id="tb-left">
+    <button id="tb-widgets" class="tb-btn" title="Widgets">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
+    </button>
+  </div>
+  <div id="tb-center">
+    <button id="tb-start" class="tb-btn tb-start" title="Start">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+        <rect x="1" y="1" width="8" height="8" rx="1.5"/>
+        <rect x="11" y="1" width="8" height="8" rx="1.5" opacity="0.75"/>
+        <rect x="1" y="11" width="8" height="8" rx="1.5" opacity="0.75"/>
+        <rect x="11" y="11" width="8" height="8" rx="1.5" opacity="0.5"/>
+      </svg>
+    </button>
+    <button class="tb-btn tb-search" title="Search" id="tb-search-btn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </button>
+    <div id="tb-apps"></div>
+  </div>
+  <div id="tb-right">
+    <button class="tb-btn" id="tb-copilot" title="Copilot AI">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a7 7 0 0 1 7 7c0 3-2 5.5-4 7l-3 3-3-3c-2-1.5-4-4-4-7a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+    </button>
+    <div id="tb-tray">
+      <div class="tray-group" id="tb-tray-icons">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" title="Network"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" title="Volume"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+      </div>
+      <div id="tb-clock"></div>
+      <button class="tb-btn tb-notify-btn" id="tb-notify" title="Notifications">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </button>
     </div>
+  </div>
+</div>
 
-    <!-- TASKBAR -->
-    <div id="os-taskbar">
-        <button id="os-start-btn" title="Start Menu">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <rect x="1" y="1" width="7" height="7" rx="1.5" fill="currentColor"/>
-                <rect x="10" y="1" width="7" height="7" rx="1.5" fill="currentColor" opacity="0.7"/>
-                <rect x="1" y="10" width="7" height="7" rx="1.5" fill="currentColor" opacity="0.7"/>
-                <rect x="10" y="10" width="7" height="7" rx="1.5" fill="currentColor" opacity="0.5"/>
-            </svg>
-        </button>
-        <div id="os-pinned"></div>
-        <div id="os-taskbar-windows"></div>
-        <div class="taskbar-spacer"></div>
-        <div id="os-tray">
-            <span class="tray-icon" title="OpenClaw Agent">&#129302;</span>
-            <span class="tray-icon" title="Network">&#128246;</span>
-            <span class="tray-icon" title="BitNet Engine">&#9889;</span>
-            <div id="os-clock"></div>
-        </div>
+<!-- ===== SEARCH FLYOUT ===== -->
+<div id="search-flyout" class="hidden">
+  <div id="sf-inner">
+    <input type="text" id="sf-input" placeholder="Search your PC and the web" autocomplete="off" spellcheck="false">
+    <div id="sf-results">
+      <div class="sf-section-title">Top apps</div>
+      <div id="sf-apps-list"></div>
+      <div class="sf-section-title">Quick searches</div>
+      <div id="sf-quick"></div>
     </div>
+  </div>
+</div>
 
-    <!-- NOTIFICATION -->
-    <div id="os-notify" class="hidden"></div>
+<!-- ===== NOTIFICATION TOAST ===== -->
+<div id="toast" class="hidden"></div>
 
-    <script src="bitnet-client.js"></script>
-    <script src="sintex-os.js"></script>
+<script src="bitnet-client.js"></script>
+<script src="sintex-os.js"></script>
 </body>
 </html>
