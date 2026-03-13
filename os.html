@@ -16,8 +16,10 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"SintexOS","applicationCategory":"OperatingSystem","operatingSystem":"Cross-Platform","url":"https://sintex.ai/os.html","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"creator":{"@type":"Organization","name":"Sintex.AI","url":"https://sintex.ai"}}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@200;300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="sintex-os.css">
+<link rel="stylesheet" href="sintex-os-ext.css">
+<link rel="stylesheet" href="sintex-os-v3.css">
 </head>
 <body>
 
@@ -55,12 +57,20 @@
 <!-- ===== WINDOWS ===== -->
 <div id="win-layer"></div>
 
-<!-- ===== COPILOT SIDEBAR ===== -->
+<!-- ===== JARVIS COPILOT SIDEBAR ===== -->
 <div id="copilot" class="closed">
   <div id="copilot-header">
     <div class="copilot-title">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a7 7 0 0 1 7 7c0 3-2 5.5-4 7l-3 3-3-3c-2-1.5-4-4-4-7a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
-      <span>Copilot</span>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" stroke="#00d4ff" stroke-width="1.5"/>
+        <circle cx="12" cy="12" r="6" stroke="#00d4ff" stroke-width="1"/>
+        <circle cx="12" cy="12" r="2.5" fill="#00d4ff"/>
+        <line x1="12" y1="2" x2="12" y2="6" stroke="#00d4ff" stroke-width="1"/>
+        <line x1="12" y1="18" x2="12" y2="22" stroke="#00d4ff" stroke-width="1"/>
+        <line x1="2" y1="12" x2="6" y2="12" stroke="#00d4ff" stroke-width="1"/>
+        <line x1="18" y1="12" x2="22" y2="12" stroke="#00d4ff" stroke-width="1"/>
+      </svg>
+      <span>JARVIS AI</span>
     </div>
     <button id="copilot-close" class="win-ctrl-btn">
       <svg width="14" height="14" viewBox="0 0 14 14"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -68,7 +78,7 @@
   </div>
   <div id="copilot-body"></div>
   <div id="copilot-input">
-    <textarea id="copilot-ask" placeholder="Ask me anything..." rows="1"></textarea>
+    <textarea id="copilot-ask" placeholder="Ask JARVIS anything..." rows="1"></textarea>
     <button id="copilot-send">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
     </button>
@@ -93,14 +103,22 @@
       <input type="text" id="start-search" placeholder="Type to search" autocomplete="off" spellcheck="false">
       <svg class="start-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     </div>
-    <div id="start-label">Pinned</div>
-    <div id="start-apps"></div>
+    <div id="start-label">
+      <span>Pinned</span>
+      <button id="start-all-apps-btn" class="start-toggle-btn">All apps &rarr;</button>
+    </div>
+    <div id="start-pinned-section">
+      <div id="start-apps"></div>
+    </div>
+    <div id="start-all-section" class="hidden">
+      <div id="start-all-apps-list"></div>
+    </div>
     <div id="start-label2">Recommended</div>
     <div id="start-recent"></div>
     <div id="start-bottom">
       <div id="start-user">
         <div class="user-avatar"></div>
-        <span>Sintex</span>
+        <span>Elrom</span>
       </div>
       <button id="start-power" title="Power">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
@@ -131,8 +149,12 @@
     <div id="tb-apps"></div>
   </div>
   <div id="tb-right">
-    <button class="tb-btn" id="tb-copilot" title="Copilot AI">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a7 7 0 0 1 7 7c0 3-2 5.5-4 7l-3 3-3-3c-2-1.5-4-4-4-7a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+    <button class="tb-btn" id="tb-copilot" title="JARVIS AI">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="9" stroke="#00d4ff" stroke-width="1.5"/>
+        <circle cx="12" cy="12" r="5" stroke="#00d4ff" stroke-width="1"/>
+        <circle cx="12" cy="12" r="2" fill="#00d4ff"/>
+      </svg>
     </button>
     <div id="tb-tray">
       <div class="tray-group" id="tb-tray-icons">
@@ -160,10 +182,87 @@
   </div>
 </div>
 
+<!-- ===== NOTIFICATION CENTER ===== -->
+<div id="notify-center" class="hidden">
+  <div class="nc-header">
+    <span>Notifications</span>
+    <button id="nc-clear-all">Clear all</button>
+  </div>
+  <div id="nc-list"></div>
+</div>
+
+<!-- ===== ACTION CENTER ===== -->
+<div id="action-center" class="hidden">
+  <div class="ac-toggles">
+    <button class="ac-toggle" data-toggle="wifi"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1"/></svg><span>Wi-Fi</span></button>
+    <button class="ac-toggle" data-toggle="bluetooth"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6.5 6.5 17.5 17.5 12 23 12 1 17.5 6.5 6.5 17.5"/></svg><span>Bluetooth</span></button>
+    <button class="ac-toggle" data-toggle="nightlight"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span>Night Light</span></button>
+    <button class="ac-toggle" data-toggle="focus"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg><span>Focus</span></button>
+    <button class="ac-toggle active" data-toggle="jarvis"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/></svg><span>JARVIS</span></button>
+    <button class="ac-toggle active" data-toggle="bitnet"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/></svg><span>BitNet</span></button>
+  </div>
+  <div class="ac-sliders">
+    <div class="ac-slider-row">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <input type="range" class="ac-range" id="ac-brightness" min="30" max="100" value="100">
+    </div>
+    <div class="ac-slider-row">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+      <input type="range" class="ac-range" id="ac-volume" min="0" max="100" value="75">
+    </div>
+  </div>
+</div>
+
+<!-- ===== WIDGETS PANEL ===== -->
+<div id="widgets-panel" class="hidden">
+  <div class="wp-header">
+    <span>Widgets</span>
+    <button id="wp-close" class="win-ctrl-btn"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+  </div>
+  <div class="wp-content">
+    <div class="wp-widget" id="wp-clock-widget">
+      <div class="wp-widget-title">Clock</div>
+      <canvas id="wp-clock-canvas" width="160" height="160"></canvas>
+    </div>
+    <div class="wp-widget" id="wp-system-widget">
+      <div class="wp-widget-title">System Status</div>
+      <div id="wp-system-bars"></div>
+    </div>
+    <div class="wp-widget" id="wp-agents-widget">
+      <div class="wp-widget-title">AI Agents</div>
+      <div id="wp-agents-list"></div>
+    </div>
+    <div class="wp-widget" id="wp-weather-widget">
+      <div class="wp-widget-title">Weather</div>
+      <div id="wp-weather-content">Loading...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SNAP INDICATOR ===== -->
+<div id="snap-indicator" class="snap-indicator hidden"></div>
+
 <!-- ===== NOTIFICATION TOAST ===== -->
 <div id="toast" class="hidden"></div>
 
+<!-- ===== SCRIPTS (modular load order) ===== -->
+<script src="https://js.puter.com/v2/"></script>
 <script src="bitnet-client.js"></script>
-<script src="sintex-os.js"></script>
+<script src="sintex-os-core.js"></script>
+<script src="sintex-os-wm.js"></script>
+<script src="sintex-os-shell.js"></script>
+<script src="sintex-os-apps.js"></script>
+<script src="sintex-os-apps-new.js"></script>
+<!-- v3.0: Messenger, Agents, Search, Browser, Voice, Auth, Brain, VPN -->
+<script src="sintex-os-messenger.js"></script>
+<script src="sintex-os-openclaw.js"></script>
+<script src="sintex-os-search-v2.js"></script>
+<script src="sintex-os-browser-v2.js"></script>
+<script src="sintex-os-voice.js"></script>
+<script src="sintex-os-auth.js"></script>
+<script src="sintex-os-brain.js"></script>
+<script src="sintex-os-vpn.js"></script>
+<script src="sintex-os-jarvis.js"></script>
+<script src="sintex-os-claude.js"></script>
 </body>
 </html>

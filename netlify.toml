@@ -6,6 +6,41 @@
   to = "/.netlify/functions/bitnet-search"
   status = 200
 
+[[redirects]]
+  from = "/api/multi-search"
+  to = "/.netlify/functions/multi-search"
+  status = 200
+
+[[redirects]]
+  from = "/api/ai-brain"
+  to = "/.netlify/functions/ai-brain"
+  status = 200
+
+[[redirects]]
+  from = "/api/ws-relay"
+  to = "/.netlify/functions/ws-relay"
+  status = 200
+
+[[redirects]]
+  from = "/api/auth/google"
+  to = "/.netlify/functions/oauth-google"
+  status = 200
+
+[[redirects]]
+  from = "/api/auth/google/callback"
+  to = "/.netlify/functions/oauth-google"
+  status = 200
+
+[[redirects]]
+  from = "/api/vpn/*"
+  to = "/.netlify/functions/vpn-relay"
+  status = 200
+
+[[redirects]]
+  from = "/api/claude"
+  to = "/.netlify/functions/claude-proxy"
+  status = 200
+
 [[headers]]
   for = "/sitemap.xml"
   [headers.values]
